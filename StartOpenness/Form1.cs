@@ -110,7 +110,7 @@ namespace StartOpenness
             fileSearch.Filter = "*.ap15_1|*.ap15_1";
             fileSearch.RestoreDirectory = true;
             fileSearch.ShowDialog();
-
+            
             string ProjectPath = fileSearch.FileName.ToString();
 
             if (string.IsNullOrEmpty(ProjectPath) == false)

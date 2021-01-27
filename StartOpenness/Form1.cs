@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using Microsoft.Office.Interop.Excel;
+using Microsoft.Win32;
 using Siemens.Engineering;
 using Siemens.Engineering.Compiler;
 using Siemens.Engineering.Hmi;
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using _Excel = Microsoft.Office.Interop.Excel;
 
 namespace StartOpenness
 {
@@ -34,7 +36,12 @@ namespace StartOpenness
             AppDomain CurrentDomain = AppDomain.CurrentDomain;
             CurrentDomain.AssemblyResolve += new ResolveEventHandler(MyResolver);
         }
-
+        /// <summary>
+        /// Function which is called in start after initialization of Form1
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
         private static Assembly MyResolver(object sender, ResolveEventArgs args)
         {
             int index = args.Name.IndexOf(',');
@@ -66,7 +73,11 @@ namespace StartOpenness
             return null;
         }
 
-
+        /// <summary>
+        /// SIEMENS function - event for a START TIA button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void StartTIA(object sender, EventArgs e)
         {
             if (rdb_WithoutUI.Checked == true)
@@ -86,7 +97,11 @@ namespace StartOpenness
             btn_Start.Enabled = false;
 
         }
-
+        /// <summary>
+        /// SIEMENS function - event for a DISPOSE TIA button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DisposeTIA(object sender, EventArgs e)
         {
             MyTiaPortal.Dispose();
@@ -101,7 +116,11 @@ namespace StartOpenness
 
 
         }
-
+        /// <summary>
+        /// SIEMENS function - event for a OPEN PROJECT button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SearchProject(object sender, EventArgs e)
         {
 
@@ -118,7 +137,10 @@ namespace StartOpenness
                 OpenProject(ProjectPath);
             }
         }
-
+        /// <summary>
+        /// Function which is called in upper event
+        /// </summary>
+        /// <param name="ProjectPath"></param>
         private void OpenProject(string ProjectPath)
         {
             try
@@ -138,14 +160,21 @@ namespace StartOpenness
             btn_Save.Enabled = true;
             btn_AddHW.Enabled = true;
         }
-
+        /// <summary>
+        /// SIEMENS function - event for a SAVE PROJECT button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SaveProject(object sender, EventArgs e)
         {
             MyProject.Save();
             txt_Status.Text = "Project saved";
         }
-
-
+        /// <summary>
+        /// SIEMENS function - event for a CLOSE PROJECT button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CloseProject(object sender, EventArgs e)
         {
             MyProject.Close();
@@ -159,7 +188,11 @@ namespace StartOpenness
 
 
         }
-
+        /// <summary>
+        /// SIEMENS function - event for a COMPILE button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Compile(object sender, EventArgs e)
         {
             btn_CompileHW.Enabled = false;
@@ -216,6 +249,10 @@ namespace StartOpenness
 
         private void btn_AddHW_Click(object sender, EventArgs e)
         {
+            AddHW();    
+        }
+        private void AddHW()
+        {
             btn_AddHW.Enabled = false;
             string MLFB = "OrderNumber:" + txt_OrderNo.Text + "/" + txt_Version.Text;
 
@@ -267,9 +304,7 @@ namespace StartOpenness
             }
 
             btn_AddHW.Enabled = true;
-
         }
-
         private void btn_ConnectTIA(object sender, EventArgs e)
         {
             btn_Connect.Enabled = false;
@@ -315,6 +350,85 @@ namespace StartOpenness
             btn_SearchProject.Enabled = false;
             btn_Save.Enabled = true;
             btn_AddHW.Enabled = true;
+        }
+        private void GetObjectsData(bool UsingDragDrop, DragEventArgs e = null)
+        {
+            string fileName;
+
+            if (UsingDragDrop)
+            {
+                string[] files;
+                files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                fileName = files[0].ToString();
+            }
+            else
+            {
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.Filter = "Excel Office | *.xl*";
+                ofd.ShowDialog();
+                fileName = ofd.FileName;
+            }
+
+            int r;
+
+            if (fileName != string.Empty)
+            {
+                //MessageBox.Show(fileName);
+                _Application excel = new _Excel.Application();
+                Workbook wb = excel.Workbooks.Open(fileName);
+                Worksheet ws = wb.Worksheets["Sheet1"];
+                Range ur = ws.UsedRange;
+
+                dataGridView1.Columns.Clear();
+                dataGridView1.Columns.Add("Column1", "Name");
+                dataGridView1.Columns.Add("Column2", "Type");
+                dataGridView1.Columns.Add("Column3", "Desc EN");
+                dataGridView1.Columns.Add("Column4", "Desc UA");
+                dataGridView1.Columns.Add("Column5", "Desc RU");
+                dataGridView1.Columns.Add("Column6", "Desc DE");
+                dataGridView1.Columns.Add("Column7", "Desc IT");
+                dataGridView1.Columns.Add(ur.Cells[1, 1 + 7].Text, ur.Cells[2, 1 + 7].Text);
+                dataGridView1.Columns.Add(ur.Cells[1, 1 + 8].Text, ur.Cells[2, 1 + 8].Text);
+                dataGridView1.Columns.Add(ur.Cells[1, 1 + 9].Text, ur.Cells[2, 1 + 9].Text);
+                dataGridView1.Columns.Add(ur.Cells[1, 1 + 10].Text, ur.Cells[2, 1 + 10].Text);
+                dataGridView1.Columns.Add(ur.Cells[1, 1 + 11].Text, ur.Cells[2, 1 + 11].Text);
+                dataGridView1.Columns.Add(ur.Cells[1, 1 + 12].Text, ur.Cells[2, 1 + 12].Text);
+                dataGridView1.Columns.Add(ur.Cells[1, 1 + 13].Text, ur.Cells[2, 1 + 13].Text);
+                dataGridView1.Columns.Add(ur.Cells[1, 1 + 14].Text, ur.Cells[2, 1 + 14].Text);
+                dataGridView1.Columns.Add(ur.Cells[1, 1 + 15].Text, ur.Cells[2, 1 + 15].Text);
+                dataGridView1.Columns.Add(ur.Cells[1, 1 + 16].Text, ur.Cells[2, 1 + 16].Text);
+
+                dataGridView1.Rows.Clear();
+                int i = 0;
+                for (r = 3; r <= ur.Rows.Count; r++)
+                {
+                    i++;
+                    dataGridView1.Rows.Add(ur.Cells[r, 1].Text,
+                        ur.Cells[r, 2].Text,
+                        ur.Cells[r, 3].Text,
+                        ur.Cells[r, 4].Text,
+                        ur.Cells[r, 5].Text,
+                        ur.Cells[r, 6].Text,
+                        ur.Cells[r, 7].Text,
+                        ur.Cells[r, 8].Text,
+                        ur.Cells[r, 9].Text,
+                        ur.Cells[r, 10].Text,
+                        ur.Cells[r, 11].Text,
+                        ur.Cells[r, 12].Text,
+                        ur.Cells[r, 13].Text,
+                        ur.Cells[r, 14].Text,
+                        ur.Cells[r, 15].Text,
+                        ur.Cells[r, 16].Text,
+                        ur.Cells[r, 17].Text);
+                }
+                wb.Close();
+                excel.Quit();
+            }
+        }
+
+        private void btn_OpnExel_Click(object sender, EventArgs e)
+        {
+            GetObjectsData(false);
         }
     }
 

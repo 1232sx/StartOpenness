@@ -61,7 +61,7 @@ namespace StartOpenness
             this.txt_AddDevice = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btn_OpnExel = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
@@ -331,14 +331,15 @@ namespace StartOpenness
             this.dataGridView1.Size = new System.Drawing.Size(949, 249);
             this.dataGridView1.TabIndex = 19;
             // 
-            // button1
+            // btn_OpnExel
             // 
-            this.button1.Location = new System.Drawing.Point(13, 513);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(76, 58);
-            this.button1.TabIndex = 20;
-            this.button1.Text = "Open Excel File";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btn_OpnExel.Location = new System.Drawing.Point(13, 513);
+            this.btn_OpnExel.Name = "btn_OpnExel";
+            this.btn_OpnExel.Size = new System.Drawing.Size(76, 58);
+            this.btn_OpnExel.TabIndex = 20;
+            this.btn_OpnExel.Text = "Open Excel File";
+            this.btn_OpnExel.UseVisualStyleBackColor = true;
+            this.btn_OpnExel.Click += new System.EventHandler(this.btn_OpnExel_Click);
             // 
             // button2
             // 
@@ -446,7 +447,7 @@ namespace StartOpenness
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btn_OpnExel);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.label2);
@@ -501,7 +502,7 @@ namespace StartOpenness
         private System.Windows.Forms.Button btn_Connect;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btn_OpnExel;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;

@@ -33,6 +33,7 @@ namespace StartOpenness
         public Form1()
         {
             InitializeComponent();
+            dataGridView1.AllowUserToAddRows = false;
             AppDomain CurrentDomain = AppDomain.CurrentDomain;
             CurrentDomain.AssemblyResolve += new ResolveEventHandler(MyResolver);
         }
@@ -485,6 +486,18 @@ namespace StartOpenness
         private void btn_OpnExel_Click(object sender, EventArgs e)
         {
             GetObjectsData(false);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < dataGridView1.Rows.Count; i++)
+            {
+                if (string.IsNullOrEmpty(dataGridView1.Rows[i].Cells[0].Value.ToString())||string.IsNullOrEmpty(dataGridView1.Rows[i].Cells[1].Value.ToString())|| string.IsNullOrEmpty(dataGridView1.Rows[i].Cells[2].Value.ToString()))
+                {
+                    continue;
+                }
+                AddHW(dataGridView1.Rows[i].Cells[0].Value.ToString(), dataGridView1.Rows[i].Cells[1].Value.ToString(), dataGridView1.Rows[i].Cells[2].Value.ToString());
+            }
         }
     }
 

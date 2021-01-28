@@ -72,7 +72,6 @@ namespace StartOpenness
            
             return null;
         }
-
         /// <summary>
         /// SIEMENS function - event for a START TIA button
         /// </summary>
@@ -106,14 +105,12 @@ namespace StartOpenness
         {
             MyTiaPortal.Dispose();
             txt_Status.Text = "TIA Portal disposed";
-
             btn_Start.Enabled = true;
             btn_Dispose.Enabled = false;
             btn_CloseProject.Enabled = false;
             btn_SearchProject.Enabled = false;
             btn_CompileHW.Enabled = false;
             btn_Save.Enabled = false;
-
 
         }
         /// <summary>
@@ -123,15 +120,11 @@ namespace StartOpenness
         /// <param name="e"></param>
         private void SearchProject(object sender, EventArgs e)
         {
-
             OpenFileDialog fileSearch = new OpenFileDialog();
-
             fileSearch.Filter = "*.ap15_1|*.ap15_1";
             fileSearch.RestoreDirectory = true;
             fileSearch.ShowDialog();
-            
             string ProjectPath = fileSearch.FileName.ToString();
-
             if (string.IsNullOrEmpty(ProjectPath) == false)
             {
                 OpenProject(ProjectPath);
@@ -153,7 +146,6 @@ namespace StartOpenness
             {
                 txt_Status.Text = "Error while opening project" + ex.Message;
             }
-
             btn_CompileHW.Enabled = true;
             btn_CloseProject.Enabled = true;
             btn_SearchProject.Enabled = false;
@@ -178,15 +170,11 @@ namespace StartOpenness
         private void CloseProject(object sender, EventArgs e)
         {
             MyProject.Close();
-
             txt_Status.Text = "Project closed";
-
             btn_SearchProject.Enabled = true;
             btn_CloseProject.Enabled = false;
             btn_Save.Enabled = false;
             btn_CompileHW.Enabled = false;
-
-
         }
         /// <summary>
         /// SIEMENS function - event for a COMPILE button
@@ -196,10 +184,8 @@ namespace StartOpenness
         private void Compile(object sender, EventArgs e)
         {
             btn_CompileHW.Enabled = false;
-
             string devname = txt_Device.Text;
             bool found = false;
-
             foreach (Device device in MyProject.Devices)
             {
                 DeviceItemComposition deviceItemAggregation = device.DeviceItems;
@@ -217,10 +203,8 @@ namespace StartOpenness
                                 {
                                     found = true;
                                     ICompilable compiler = controllerTarget.GetService<ICompilable>();
-
                                     CompilerResult result = compiler.Compile();
                                     txt_Status.Text = "Compiling of " + controllerTarget.Name + ": State: " + result.State + " / Warning Count: " + result.WarningCount + " / Error Count: " + result.ErrorCount;
-
                                 }
                             }
                             if (softwareContainer.Software is HmiTarget)
@@ -246,7 +230,6 @@ namespace StartOpenness
 
             btn_CompileHW.Enabled = true;
         }
-
         private void btn_AddHW_Click(object sender, EventArgs e)
         {
             AddHW();    
@@ -322,8 +305,6 @@ namespace StartOpenness
                     {
                         rdb_WithoutUI.Checked = true;
                     }
-
-
                     if (MyTiaPortal.Projects.Count <= 0)
                     {
                         txt_Status.Text = "No TIA Portal Project was found!";
@@ -351,7 +332,16 @@ namespace StartOpenness
             btn_Save.Enabled = true;
             btn_AddHW.Enabled = true;
         }
-        private void GetObjectsData(bool UsingDragDrop, DragEventArgs e = null)
+        /// <summary>
+        /// функция открытия и выбора Ексель файла
+        /// добавлена переменная 
+        /// </summary>
+        /// <param name="UsingDragDrop"></param>
+        /// <param name="e"></param>
+        /// <param name="sheet">переменная которая устанавливает номер листа Ексель 
+        /// по умолчанию после открытия файла устанавливается на 1 вкладку
+        /// в будущем с помощью Комбобокс можно будет выбирать номер листа</param>
+        private void GetObjectsData(bool UsingDragDrop, DragEventArgs e = null, int sheet = 1)
         {
             string fileName;
 
@@ -376,56 +366,70 @@ namespace StartOpenness
                 //MessageBox.Show(fileName);
                 _Application excel = new _Excel.Application();
                 Workbook wb = excel.Workbooks.Open(fileName);
-                Worksheet ws = wb.Worksheets["Sheet1"];
+                Worksheet ws = wb.Worksheets[sheet];
                 Range ur = ws.UsedRange;
+                // необходимо переделать установку наименования Датагрид таким оразом,
+                // что бы названия брались с файла, а не устанавливались в ручную
 
                 dataGridView1.Columns.Clear();
-                dataGridView1.Columns.Add("Column1", "Name");
-                dataGridView1.Columns.Add("Column2", "Type");
-                dataGridView1.Columns.Add("Column3", "Desc EN");
-                dataGridView1.Columns.Add("Column4", "Desc UA");
-                dataGridView1.Columns.Add("Column5", "Desc RU");
-                dataGridView1.Columns.Add("Column6", "Desc DE");
-                dataGridView1.Columns.Add("Column7", "Desc IT");
-                dataGridView1.Columns.Add(ur.Cells[1, 1 + 7].Text, ur.Cells[2, 1 + 7].Text);
-                dataGridView1.Columns.Add(ur.Cells[1, 1 + 8].Text, ur.Cells[2, 1 + 8].Text);
-                dataGridView1.Columns.Add(ur.Cells[1, 1 + 9].Text, ur.Cells[2, 1 + 9].Text);
-                dataGridView1.Columns.Add(ur.Cells[1, 1 + 10].Text, ur.Cells[2, 1 + 10].Text);
-                dataGridView1.Columns.Add(ur.Cells[1, 1 + 11].Text, ur.Cells[2, 1 + 11].Text);
-                dataGridView1.Columns.Add(ur.Cells[1, 1 + 12].Text, ur.Cells[2, 1 + 12].Text);
-                dataGridView1.Columns.Add(ur.Cells[1, 1 + 13].Text, ur.Cells[2, 1 + 13].Text);
-                dataGridView1.Columns.Add(ur.Cells[1, 1 + 14].Text, ur.Cells[2, 1 + 14].Text);
-                dataGridView1.Columns.Add(ur.Cells[1, 1 + 15].Text, ur.Cells[2, 1 + 15].Text);
-                dataGridView1.Columns.Add(ur.Cells[1, 1 + 16].Text, ur.Cells[2, 1 + 16].Text);
-
+                for (int k = 1; k <= ur.Columns.Count; k++)
+                {
+                    dataGridView1.Columns.Add(ur.Cells[1, k].Text, ur.Cells[2, k].Text);
+                }
+                #region изначальное добавление наименования колонок
+                //dataGridView1.Columns.Add("Column1", "Name");
+                //dataGridView1.Columns.Add("Column2", "Type");
+                //dataGridView1.Columns.Add("Column3", "Desc EN");
+                //dataGridView1.Columns.Add("Column4", "Desc UA");
+                //dataGridView1.Columns.Add("Column5", "Desc RU");
+                //dataGridView1.Columns.Add("Column6", "Desc DE");
+                //dataGridView1.Columns.Add("Column7", "Desc IT");
+                //dataGridView1.Columns.Add(ur.Cells[1, 1 + 7].Text, ur.Cells[2, 1 + 7].Text);
+                //dataGridView1.Columns.Add(ur.Cells[1, 1 + 8].Text, ur.Cells[2, 1 + 8].Text);
+                //dataGridView1.Columns.Add(ur.Cells[1, 1 + 9].Text, ur.Cells[2, 1 + 9].Text);
+                //dataGridView1.Columns.Add(ur.Cells[1, 1 + 10].Text, ur.Cells[2, 1 + 10].Text);
+                //dataGridView1.Columns.Add(ur.Cells[1, 1 + 11].Text, ur.Cells[2, 1 + 11].Text);
+                //dataGridView1.Columns.Add(ur.Cells[1, 1 + 12].Text, ur.Cells[2, 1 + 12].Text);
+                //dataGridView1.Columns.Add(ur.Cells[1, 1 + 13].Text, ur.Cells[2, 1 + 13].Text);
+                //dataGridView1.Columns.Add(ur.Cells[1, 1 + 14].Text, ur.Cells[2, 1 + 14].Text);
+                //dataGridView1.Columns.Add(ur.Cells[1, 1 + 15].Text, ur.Cells[2, 1 + 15].Text);
+                //dataGridView1.Columns.Add(ur.Cells[1, 1 + 16].Text, ur.Cells[2, 1 + 16].Text);
+                #endregion
                 dataGridView1.Rows.Clear();
-                int i = 0;
+
+                string [] excellRows = new string[ur.Columns.Count];
+                // Создаю массив для записи значений каждой ячейки строки для дальшего добавления в ДГВ - datagridwiev
                 for (r = 3; r <= ur.Rows.Count; r++)
                 {
-                    i++;
-                    dataGridView1.Rows.Add(ur.Cells[r, 1].Text,
-                        ur.Cells[r, 2].Text,
-                        ur.Cells[r, 3].Text,
-                        ur.Cells[r, 4].Text,
-                        ur.Cells[r, 5].Text,
-                        ur.Cells[r, 6].Text,
-                        ur.Cells[r, 7].Text,
-                        ur.Cells[r, 8].Text,
-                        ur.Cells[r, 9].Text,
-                        ur.Cells[r, 10].Text,
-                        ur.Cells[r, 11].Text,
-                        ur.Cells[r, 12].Text,
-                        ur.Cells[r, 13].Text,
-                        ur.Cells[r, 14].Text,
-                        ur.Cells[r, 15].Text,
-                        ur.Cells[r, 16].Text,
-                        ur.Cells[r, 17].Text);
+                    for (int i = 0; i < ur.Columns.Count; i++)
+                    {
+                        excellRows[i] = ur.Cells[r, i + 1].Text;
+                    }
+                    dataGridView1.Rows.Add(excellRows);
+                #region изначальное добавление строк
+                    //dataGridView1.Rows.Add(ur.Cells[r, 1].Text,
+                    //    ur.Cells[r, 2].Text,
+                    //    ur.Cells[r, 3].Text,
+                    //    ur.Cells[r, 4].Text,
+                    //    ur.Cells[r, 5].Text,
+                    //    ur.Cells[r, 6].Text,
+                    //    ur.Cells[r, 7].Text,
+                    //    ur.Cells[r, 8].Text,
+                    //    ur.Cells[r, 9].Text,
+                    //    ur.Cells[r, 10].Text,
+                    //    ur.Cells[r, 11].Text,
+                    //    ur.Cells[r, 12].Text,
+                    //    ur.Cells[r, 13].Text,
+                    //    ur.Cells[r, 14].Text,
+                    //    ur.Cells[r, 15].Text,
+                    //    ur.Cells[r, 16].Text,
+                    //    ur.Cells[r, 17].Text);
+                    #endregion
                 }
                 wb.Close();
                 excel.Quit();
             }
         }
-
         private void btn_OpnExel_Click(object sender, EventArgs e)
         {
             GetObjectsData(false);

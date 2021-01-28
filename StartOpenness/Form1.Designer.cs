@@ -72,6 +72,8 @@ namespace StartOpenness
             this.button9 = new System.Windows.Forms.Button();
             this.button10 = new System.Windows.Forms.Button();
             this.button11 = new System.Windows.Forms.Button();
+            this.label5 = new System.Windows.Forms.Label();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.grp_TIA.SuspendLayout();
             this.grp_Compile.SuspendLayout();
             this.grp_Project.SuspendLayout();
@@ -326,14 +328,14 @@ namespace StartOpenness
             // dataGridView1
             // 
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(13, 248);
+            this.dataGridView1.Location = new System.Drawing.Point(98, 248);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(949, 249);
+            this.dataGridView1.Size = new System.Drawing.Size(864, 336);
             this.dataGridView1.TabIndex = 19;
             // 
             // btn_OpnExel
             // 
-            this.btn_OpnExel.Location = new System.Drawing.Point(13, 513);
+            this.btn_OpnExel.Location = new System.Drawing.Point(3, 599);
             this.btn_OpnExel.Name = "btn_OpnExel";
             this.btn_OpnExel.Size = new System.Drawing.Size(76, 58);
             this.btn_OpnExel.TabIndex = 20;
@@ -343,7 +345,7 @@ namespace StartOpenness
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(98, 513);
+            this.button2.Location = new System.Drawing.Point(88, 599);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 58);
             this.button2.TabIndex = 21;
@@ -352,7 +354,7 @@ namespace StartOpenness
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(179, 513);
+            this.button3.Location = new System.Drawing.Point(169, 599);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
             this.button3.TabIndex = 22;
@@ -361,7 +363,7 @@ namespace StartOpenness
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(260, 513);
+            this.button4.Location = new System.Drawing.Point(250, 599);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 23);
             this.button4.TabIndex = 23;
@@ -370,7 +372,7 @@ namespace StartOpenness
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(341, 513);
+            this.button5.Location = new System.Drawing.Point(331, 599);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(75, 23);
             this.button5.TabIndex = 24;
@@ -379,7 +381,7 @@ namespace StartOpenness
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(422, 513);
+            this.button6.Location = new System.Drawing.Point(412, 599);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(75, 23);
             this.button6.TabIndex = 25;
@@ -388,7 +390,7 @@ namespace StartOpenness
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(503, 513);
+            this.button7.Location = new System.Drawing.Point(493, 599);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(75, 23);
             this.button7.TabIndex = 26;
@@ -397,7 +399,7 @@ namespace StartOpenness
             // 
             // button8
             // 
-            this.button8.Location = new System.Drawing.Point(585, 513);
+            this.button8.Location = new System.Drawing.Point(575, 599);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(75, 23);
             this.button8.TabIndex = 27;
@@ -406,7 +408,7 @@ namespace StartOpenness
             // 
             // button9
             // 
-            this.button9.Location = new System.Drawing.Point(667, 513);
+            this.button9.Location = new System.Drawing.Point(657, 599);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(75, 23);
             this.button9.TabIndex = 28;
@@ -415,7 +417,7 @@ namespace StartOpenness
             // 
             // button10
             // 
-            this.button10.Location = new System.Drawing.Point(749, 513);
+            this.button10.Location = new System.Drawing.Point(739, 599);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(75, 23);
             this.button10.TabIndex = 29;
@@ -424,12 +426,31 @@ namespace StartOpenness
             // 
             // button11
             // 
-            this.button11.Location = new System.Drawing.Point(830, 513);
+            this.button11.Location = new System.Drawing.Point(820, 599);
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(75, 23);
             this.button11.TabIndex = 30;
             this.button11.Text = "button11";
             this.button11.UseVisualStyleBackColor = true;
+            // 
+            // label5
+            // 
+            this.label5.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label5.Location = new System.Drawing.Point(13, 248);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(76, 67);
+            this.label5.TabIndex = 31;
+            this.label5.Text = "Выпадающий список для выбора страницы Excel";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label5.UseCompatibleTextRendering = true;
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(12, 343);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(77, 21);
+            this.comboBox1.TabIndex = 32;
             // 
             // Form1
             // 
@@ -437,6 +458,8 @@ namespace StartOpenness
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Gainsboro;
             this.ClientSize = new System.Drawing.Size(976, 669);
+            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.button11);
             this.Controls.Add(this.button10);
             this.Controls.Add(this.button9);
@@ -513,6 +536,8 @@ namespace StartOpenness
         private System.Windows.Forms.Button button9;
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.Button button11;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }
 

@@ -288,6 +288,60 @@ namespace StartOpenness
 
             btn_AddHW.Enabled = true;
         }
+        private void AddHW(string projectName, string typeNumber, string versionNumber)
+        {
+            //btn_AddHW.Enabled = false;
+            string MLFB = "OrderNumber:" + typeNumber + "/" + versionNumber;
+
+            string name = projectName;
+            string devname = "station" + projectName;
+            bool found = false;
+            foreach (Device device in MyProject.Devices)
+            {
+                DeviceItemComposition deviceItemAggregation = device.DeviceItems;
+                foreach (DeviceItem deviceItem in deviceItemAggregation)
+                {
+                    if (deviceItem.Name == devname || device.Name == devname)
+                    {
+                        SoftwareContainer softwareContainer = deviceItem.GetService<SoftwareContainer>();
+                        if (softwareContainer != null)
+                        {
+                            if (softwareContainer.Software is PlcSoftware)
+                            {
+                                PlcSoftware controllerTarget = softwareContainer.Software as PlcSoftware;
+                                if (controllerTarget != null)
+                                {
+                                    found = true;
+
+                                }
+                            }
+                            if (softwareContainer.Software is HmiTarget)
+                            {
+                                HmiTarget hmitarget = softwareContainer.Software as HmiTarget;
+                                if (hmitarget != null)
+                                {
+                                    found = true;
+
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+            if (found == true)
+            {
+                txt_Status.Text = "Device " + projectName + " already exists";
+            }
+            else
+            {
+                Device deviceName = MyProject.Devices.CreateWithItem(MLFB, name, devname);
+
+                txt_Status.Text = "Add Device Name: " + name + " with Order Number: " + typeNumber + " and Firmware Version: " + versionNumber;
+            }
+
+            //btn_AddHW.Enabled = true;
+        }
         private void btn_ConnectTIA(object sender, EventArgs e)
         {
             btn_Connect.Enabled = false;
@@ -359,8 +413,6 @@ namespace StartOpenness
                 fileName = ofd.FileName;
             }
 
-            int r;
-
             if (fileName != string.Empty)
             {
                 //MessageBox.Show(fileName);
@@ -399,7 +451,7 @@ namespace StartOpenness
 
                 string [] excellRows = new string[ur.Columns.Count];
                 // Создаю массив для записи значений каждой ячейки строки для дальшего добавления в ДГВ - datagridwiev
-                for (r = 3; r <= ur.Rows.Count; r++)
+                for (int r = 3; r <= ur.Rows.Count; r++)
                 {
                     for (int i = 0; i < ur.Columns.Count; i++)
                     {

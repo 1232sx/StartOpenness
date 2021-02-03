@@ -250,7 +250,9 @@ namespace StartOpenness
                 DeviceItemComposition deviceItemAggregation = device.DeviceItems;
                 foreach (DeviceItem deviceItem in deviceItemAggregation)
                 {
-                    if (deviceItem.Name == devname || device.Name == devname)
+                    // Ошибка при проверке имен 'deviceItem.Name == devname || device.Name == devname' 
+                    //  device.Name == devname => device.Name == name
+                    if (deviceItem.Name == devname || device.Name == name)
                     {
                         SoftwareContainer softwareContainer = deviceItem.GetService<SoftwareContainer>();
                         if (softwareContainer != null)
@@ -304,7 +306,9 @@ namespace StartOpenness
                 DeviceItemComposition deviceItemAggregation = device.DeviceItems;
                 foreach (DeviceItem deviceItem in deviceItemAggregation)
                 {
-                    if (deviceItem.Name == devname || device.Name == devname)
+                    // Ошибка при проверке имен 'deviceItem.Name == devname || device.Name == devname' 
+                    //  device.Name == devname => device.Name == name
+                    if (deviceItem.Name == devname || device.Name == name)
                     {
                         SoftwareContainer softwareContainer = deviceItem.GetService<SoftwareContainer>();
                         if (softwareContainer != null)

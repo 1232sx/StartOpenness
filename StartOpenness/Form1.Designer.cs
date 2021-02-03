@@ -62,7 +62,7 @@ namespace StartOpenness
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.btn_OpnExel = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btn_AddDevFrExcell = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
@@ -280,7 +280,7 @@ namespace StartOpenness
             this.txt_Version.Name = "txt_Version";
             this.txt_Version.Size = new System.Drawing.Size(115, 20);
             this.txt_Version.TabIndex = 21;
-            this.txt_Version.Text = "V2.1";
+            this.txt_Version.Text = "15.1.0.0";
             // 
             // label3
             // 
@@ -297,7 +297,7 @@ namespace StartOpenness
             this.txt_OrderNo.Name = "txt_OrderNo";
             this.txt_OrderNo.Size = new System.Drawing.Size(115, 20);
             this.txt_OrderNo.TabIndex = 19;
-            this.txt_OrderNo.Text = "6ES7 516-3AN01-0AB0";
+            this.txt_OrderNo.Text = "6AV2 123-2MA03-0AX0";
             // 
             // label2
             // 
@@ -314,7 +314,7 @@ namespace StartOpenness
             this.txt_AddDevice.Name = "txt_AddDevice";
             this.txt_AddDevice.Size = new System.Drawing.Size(115, 20);
             this.txt_AddDevice.TabIndex = 13;
-            this.txt_AddDevice.Text = "PLC_1";
+            this.txt_AddDevice.Text = "HMI_test";
             // 
             // groupBox2
             // 
@@ -343,33 +343,35 @@ namespace StartOpenness
             this.btn_OpnExel.UseVisualStyleBackColor = true;
             this.btn_OpnExel.Click += new System.EventHandler(this.btn_OpnExel_Click);
             // 
-            // button2
+            // btn_AddDevFrExcell
             // 
-            this.button2.Location = new System.Drawing.Point(88, 599);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 58);
-            this.button2.TabIndex = 21;
-            this.button2.Text = "Add Device from Excel";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btn_AddDevFrExcell.Location = new System.Drawing.Point(88, 599);
+            this.btn_AddDevFrExcell.Name = "btn_AddDevFrExcell";
+            this.btn_AddDevFrExcell.Size = new System.Drawing.Size(75, 58);
+            this.btn_AddDevFrExcell.TabIndex = 21;
+            this.btn_AddDevFrExcell.Text = "Add Device from Excel";
+            this.btn_AddDevFrExcell.UseVisualStyleBackColor = true;
+            this.btn_AddDevFrExcell.Click += new System.EventHandler(this.btn_AddDevFrExcell_Click);
             // 
             // button3
             // 
             this.button3.Location = new System.Drawing.Point(169, 599);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
+            this.button3.Size = new System.Drawing.Size(75, 58);
             this.button3.TabIndex = 22;
-            this.button3.Text = "button3";
+            this.button3.Text = "Create single subnet";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // button4
             // 
             this.button4.Location = new System.Drawing.Point(250, 599);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 23);
+            this.button4.Size = new System.Drawing.Size(75, 58);
             this.button4.TabIndex = 23;
-            this.button4.Text = "button4";
+            this.button4.Text = "Create subnet connected to HW";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // button5
             // 
@@ -429,10 +431,11 @@ namespace StartOpenness
             // 
             this.button11.Location = new System.Drawing.Point(820, 599);
             this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(75, 23);
+            this.button11.Size = new System.Drawing.Size(75, 58);
             this.button11.TabIndex = 30;
-            this.button11.Text = "button11";
+            this.button11.Text = "Test";
             this.button11.UseVisualStyleBackColor = true;
+            this.button11.Click += new System.EventHandler(this.button11_Click);
             // 
             // label5
             // 
@@ -470,7 +473,7 @@ namespace StartOpenness
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.btn_AddDevFrExcell);
             this.Controls.Add(this.btn_OpnExel);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.groupBox2);
@@ -527,7 +530,7 @@ namespace StartOpenness
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Button btn_OpnExel;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btn_AddDevFrExcell;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button5;

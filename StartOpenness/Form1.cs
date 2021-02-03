@@ -9,6 +9,7 @@ using Siemens.Engineering.SW;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using _Excel = Microsoft.Office.Interop.Excel;
@@ -17,9 +18,8 @@ namespace StartOpenness
 {
     public partial class Form1 : Form
     {
-
         private static TiaPortalProcess _tiaProcess;
-
+        
         public TiaPortal MyTiaPortal
         {
             get; set;
@@ -28,12 +28,14 @@ namespace StartOpenness
         {
             get; set;
         }
-
-
+        public Node MyNode
+        {
+            get; set;
+        }
         public Form1()
         {
             InitializeComponent();
-            dataGridView1.AllowUserToAddRows = false;
+            //dataGridView1.AllowUserToAddRows = false;
             AppDomain CurrentDomain = AppDomain.CurrentDomain;
             CurrentDomain.AssemblyResolve += new ResolveEventHandler(MyResolver);
         }
@@ -282,20 +284,20 @@ namespace StartOpenness
             }
             else
             {
-                Device deviceName = MyProject.Devices.CreateWithItem(MLFB, name, devname);
-
+                //Device deviceName = MyProject.Devices.CreateWithItem(MLFB, name, devname);
+                Device deviceName = MyProject.Devices.CreateWithItem("OrderNumber:6AV2 124-0MC01-0AX0/15.1.0.0", name, devname);
                 txt_Status.Text = "Add Device Name: " + name + " with Order Number: " + txt_OrderNo.Text + " and Firmware Version: " + txt_Version.Text;
             }
 
             btn_AddHW.Enabled = true;
         }
-        private void AddHW(string projectName, string typeNumber, string versionNumber)
+        private void AddHW(string deviceItemName, string deviceName, string typeNumber, string versionNumber)
         {
             //btn_AddHW.Enabled = false;
             string MLFB = "OrderNumber:" + typeNumber + "/" + versionNumber;
 
-            string name = projectName;
-            string devname = "station" + projectName;
+            string name = deviceItemName;
+            string devname = deviceName;
             bool found = false;
             foreach (Device device in MyProject.Devices)
             {
@@ -313,7 +315,6 @@ namespace StartOpenness
                                 if (controllerTarget != null)
                                 {
                                     found = true;
-
                                 }
                             }
                             if (softwareContainer.Software is HmiTarget)
@@ -322,7 +323,6 @@ namespace StartOpenness
                                 if (hmitarget != null)
                                 {
                                     found = true;
-
                                 }
 
                             }
@@ -332,11 +332,11 @@ namespace StartOpenness
             }
             if (found == true)
             {
-                txt_Status.Text = "Device " + projectName + " already exists";
+                txt_Status.Text = "Device " + deviceItemName + " already exists";
             }
             else
             {
-                Device deviceName = MyProject.Devices.CreateWithItem(MLFB, name, devname);
+                Device createdDeviceName = MyProject.Devices.CreateWithItem(MLFB, name, devname);
 
                 txt_Status.Text = "Add Device Name: " + name + " with Order Number: " + typeNumber + " and Firmware Version: " + versionNumber;
             }
@@ -487,17 +487,124 @@ namespace StartOpenness
         {
             GetObjectsData(false);
         }
-
-        private void button2_Click(object sender, EventArgs e)
+        private void btn_AddDevFrExcell_Click(object sender, EventArgs e)
         {
             for (int i = 0; i < dataGridView1.Rows.Count; i++)
             {
-                if (string.IsNullOrEmpty(dataGridView1.Rows[i].Cells[0].Value.ToString())||string.IsNullOrEmpty(dataGridView1.Rows[i].Cells[1].Value.ToString())|| string.IsNullOrEmpty(dataGridView1.Rows[i].Cells[2].Value.ToString()))
+                if (dataGridView1.Rows[i].Cells[0].Value ==null)
                 {
                     continue;
                 }
-                AddHW(dataGridView1.Rows[i].Cells[0].Value.ToString(), dataGridView1.Rows[i].Cells[1].Value.ToString(), dataGridView1.Rows[i].Cells[2].Value.ToString());
+               
+                AddHW(dataGridView1.Rows[i].Cells[0].Value.ToString(), dataGridView1.Rows[i].Cells[1].Value.ToString(), dataGridView1.Rows[i].Cells[2].Value.ToString(), dataGridView1.Rows[i].Cells[3].Value.ToString());
             }
+        }
+        private void button3_Click(object sender, EventArgs e)
+        {
+            SubnetComposition subnets = MyProject.Subnets;
+            subnets.Create("System:Subnet.Ethernet", "NewSubnet100");
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            //MessageBox.Show(MyProject.Devices[0].DeviceItems[1].DeviceItems[7].Name);
+            NetworkInterface network = MyProject.Devices[0].DeviceItems[1].DeviceItems[7].GetService<NetworkInterface>();
+           
+            Node node = network.Nodes[0];
+            Subnet subnet = node.CreateAndConnectToSubnet("111");
+            network = MyProject.Devices[1].DeviceItems[1].DeviceItems[5].GetService<NetworkInterface>();
+            node = network.Nodes[0];
+            node.ConnectToSubnet(subnet);
+
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            //MyNode = Node
+            //MessageBox.Show(MyNode.ToString());
+            //SubnetComposition subnets = MyProject.Subnets;
+
+            //NetworkInterface IF_PLC =MyProject.Devices[0].GetService<NetworkInterface>();
+            //Node PLC_Node = IF_PLC.Nodes[0];
+            //Subnet subnet = PLC_Node.CreateAndConnectToSubnet("XXX");
+            //MessageBox.Show(MyProject.Devices[1].DeviceItems[1].Name);
+            //foreach (Device device in MyProject.Devices)
+            //{
+            //    DeviceItemComposition deviceItemAggregation = device.DeviceItems;
+            //    foreach (DeviceItem deviceItem in deviceItemAggregation)
+            //    {
+            //        MessageBox.Show(deviceItem.Name);
+            //    }
+            //}
+            //Node node = MyProject.Devices[0].GetService<Node>();
+            //SubnetComposition subnets = MyProject.Subnets;
+            // Subnet _subnet1 = subnets.Create("System:Subnet.Ethernet", "subnet1");
+            //DeviceItem deviceItem = MyProject.Devices[0].DeviceItems[1];
+            //DeviceItem plc_obj = MyProject.Devices[0].DeviceItems[1].DeviceItems[2];
+            //NetworkInterface @interface = plc_obj.GetService<NetworkInterface>();
+            //Node node = plc_obj.GetService<NetworkInterface>();
+            //Siemens.Engineering.HW.Features.NetworkInterface IF_PLC = plc_obj.GetService<Siemens.Engineering.HW.Features.NetworkInterface>();
+            //NetworkInterface network1 = null;
+            //network1 = MyProject.Devices[0].DeviceItems[1].GetService<Siemens.Engineering.HW.Features.NetworkInterface>();
+            //network1.Nodes.First().ConnectToSubnet(_subnet1);
+            //Siemens.Engineering.HW.Node PLC_Node = IF_PLC.Nodes[0];
+            //PLC_Node.ConnectToSubnet(_subnet1);
+            //Node node = (Node)plc_obj;
+            //MessageBox.Show(plc_obj.Name);
+            //dataGridView1.Columns.Add("Device", "Device");
+            //dataGridView1.Columns.Add("Dev1", "Dev1");
+            //dataGridView1.Columns.Add("Dev2", "Dev2");
+            //dataGridView1.Columns.Add("Dev3", "Dev3");
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    if (!string.IsNullOrEmpty(MyProject.Devices[0].DeviceItems[1].DeviceItems[i].Name))
+            //    {
+            //        dataGridView1.Rows.Add(i.ToString(), MyProject.Devices[0].DeviceItems[2].DeviceItems[i].Name);
+            //    }
+            //}
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    if (!string.IsNullOrEmpty(MyProject.Devices[0].DeviceItems[1].DeviceItems[i].Name))
+            //    {
+            //        dataGridView1.Rows.Add(i.ToString(), MyProject.Devices[0].DeviceItems[1].DeviceItems[i].Name);
+            //    }
+
+
+            //}
+            //foreach (Device device in MyProject.Devices)
+            //{
+            //    dataGridView1.Rows.Add(device.Name);
+            //    foreach (DeviceItem Dev1 in device.DeviceItems)
+            //    {
+            //        dataGridView1.Rows.Add("-", Dev1.Name);
+            //        foreach (DeviceItem Dev2 in Dev1.DeviceItems)
+            //        {
+            //            dataGridView1.Rows.Add("-", "-", Dev2.Name);
+            //            foreach (DeviceItem Dev3 in Dev2.DeviceItems)
+            //            {
+            //                dataGridView1.Rows.Add("-", "-", "-", Dev3.Name);
+            //            }
+            //        }
+            //    }
+            //}
+            // Проверка входящих параметров HMI или это другой HW, без этого ошибка пра добавлении HMI 
+            string name1 = "name1";
+            string deviceName1 = "devname1";
+            //Device device;
+            string ordernumber = "OrderNumber:6AV2 124-0MC01-0AX0/15.1.0.0";
+            //device.TypeIdentifier = "TypeIdentifier;";
+            if (true)
+            {
+                deviceName1 = "";
+                Device device1 = MyProject.Devices.CreateWithItem(ordernumber, name1, deviceName1);
+            }
+            else
+            {
+                MessageBox.Show("Not today honey");
+            }
+
+            
+            //Device device1 = MyProject.Devices.CreateWithItem("OrderNumber:6AV2 124-0MC01-0AX0/15.1.0.0", "12", deviceName1);
         }
     }
 

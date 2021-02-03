@@ -251,8 +251,11 @@ namespace StartOpenness
                 foreach (DeviceItem deviceItem in deviceItemAggregation)
                 {
                     // Ошибка при проверке имен 'deviceItem.Name == devname || device.Name == devname' 
-                    //  device.Name == devname => device.Name == name
-                    if (deviceItem.Name == devname || device.Name == name)
+                    //  device.Name == devname => device.Name == name это частично правильно
+                    // добавлено еще одно условие проверки именно для HMI и в итоге получилось 
+                    // if (deviceItem.Name == name || device.Name == devname|| device.Name == name)
+                    // данная проверка не пропускает ни PLC ни HMI
+                    if (deviceItem.Name == name || device.Name == devname || device.Name == name)
                     {
                         SoftwareContainer softwareContainer = deviceItem.GetService<SoftwareContainer>();
                         if (softwareContainer != null)
@@ -307,8 +310,11 @@ namespace StartOpenness
                 foreach (DeviceItem deviceItem in deviceItemAggregation)
                 {
                     // Ошибка при проверке имен 'deviceItem.Name == devname || device.Name == devname' 
-                    //  device.Name == devname => device.Name == name
-                    if (deviceItem.Name == devname || device.Name == name)
+                    //  device.Name == devname => device.Name == name это частично правильно
+                    // добавлено еще одно условие проверки именно для HMI и в итоге получилось 
+                    // if (deviceItem.Name == name || device.Name == devname|| device.Name == name)
+                    // данная проверка не пропускает ни PLC ни HMI
+                    if (deviceItem.Name == name || device.Name == devname|| device.Name == name)
                     {
                         SoftwareContainer softwareContainer = deviceItem.GetService<SoftwareContainer>();
                         if (softwareContainer != null)
@@ -592,23 +598,32 @@ namespace StartOpenness
             //    }
             //}
             // Проверка входящих параметров HMI или это другой HW, без этого ошибка пра добавлении HMI 
-            string name1 = "name1";
-            string deviceName1 = "devname1";
-            //Device device;
-            string ordernumber = "OrderNumber:6AV2 124-0MC01-0AX0/15.1.0.0";
-            //device.TypeIdentifier = "TypeIdentifier;";
-            if (true)
+            //string name1 = "name1";
+            //string deviceName1 = "devname1";
+            ////Device device;
+            //string ordernumber = "OrderNumber:6AV2 124-0MC01-0AX0/15.1.0.0";
+            ////device.TypeIdentifier = "TypeIdentifier;";
+            //if (true)
+            //{
+            //    deviceName1 = "";
+            //    Device device1 = MyProject.Devices.CreateWithItem(ordernumber, name1, deviceName1);
+            //}
+            //else
+            //{
+            //    MessageBox.Show("Not today honey");
+            //}
+            //Device device1 = MyProject.Devices.CreateWithItem("OrderNumber:6AV2 124-0MC01-0AX0/15.1.0.0", "12", deviceName1);
+            dataGridView1.Columns.Add("deviceItem.Name", "deviceItem.Name");
+            dataGridView1.Columns.Add("device.Name", "device.Name");
+            foreach (Device device in MyProject.Devices)
             {
-                deviceName1 = "";
-                Device device1 = MyProject.Devices.CreateWithItem(ordernumber, name1, deviceName1);
-            }
-            else
-            {
-                MessageBox.Show("Not today honey");
+                DeviceItemComposition deviceItemAggregation = device.DeviceItems;
+                foreach (DeviceItem deviceItem in deviceItemAggregation)
+                {
+                    dataGridView1.Rows.Add(deviceItem.Name, device.Name);
+                }
             }
 
-            
-            //Device device1 = MyProject.Devices.CreateWithItem("OrderNumber:6AV2 124-0MC01-0AX0/15.1.0.0", "12", deviceName1);
         }
     }
 

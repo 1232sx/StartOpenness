@@ -61,7 +61,6 @@ namespace StartOpenness
             this.button11 = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.helpProvider1 = new System.Windows.Forms.HelpProvider();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.grp_TIA.SuspendLayout();
             this.grp_Project.SuspendLayout();
@@ -394,7 +393,6 @@ namespace StartOpenness
         private System.Windows.Forms.Button button11;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.HelpProvider helpProvider1;
         private System.Windows.Forms.RichTextBox richTextBox1;
     }
 }

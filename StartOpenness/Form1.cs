@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Microsoft.Office.Interop.Excel;
+﻿using Microsoft.Office.Interop.Excel;
 using Microsoft.Win32;
 using Siemens.Engineering;
 using Siemens.Engineering.Compiler;
@@ -25,7 +24,7 @@ namespace StartOpenness
         {
             get; set;
         }
-        
+        public string dateTimeNow => "[" + DateTime.Now + "] ";
         public Project MyProject
         {
             get; set;
@@ -40,6 +39,7 @@ namespace StartOpenness
             //dataGridView1.AllowUserToAddRows = false;
             AppDomain CurrentDomain = AppDomain.CurrentDomain;
             CurrentDomain.AssemblyResolve += new ResolveEventHandler(MyResolver);
+            richTextBox1.Text = null;
         }
         /// <summary>
         /// Function which is called in start after initialization of Form1
@@ -87,13 +87,13 @@ namespace StartOpenness
             if (rdb_WithoutUI.Checked == true)
             {
                 MyTiaPortal = new TiaPortal(TiaPortalMode.WithoutUserInterface);
-                txt_Status.Text = "TIA Portal started without user interface";
+                richTextBox1.Text += dateTimeNow + "TIA Portal started without user interface" + System.Environment.NewLine;
                 _tiaProcess = TiaPortal.GetProcesses()[0];
             }
             else
             {
                 MyTiaPortal = new TiaPortal(TiaPortalMode.WithUserInterface);
-                txt_Status.Text = "TIA Portal started with user interface";
+                richTextBox1.Text += dateTimeNow +  "TIA Portal started with user interface" + System.Environment.NewLine;
             }
 
             btn_SearchProject.Enabled = true;
@@ -109,7 +109,7 @@ namespace StartOpenness
         private void DisposeTIA(object sender, EventArgs e)
         {
             MyTiaPortal.Dispose();
-            txt_Status.Text = "TIA Portal disposed";
+            richTextBox1.Text += dateTimeNow + "TIA Portal disposed" + System.Environment.NewLine;
             btn_Start.Enabled = true;
             btn_Dispose.Enabled = false;
             btn_CloseProject.Enabled = false;
@@ -144,12 +144,12 @@ namespace StartOpenness
             try
             {
                 MyProject = MyTiaPortal.Projects.Open(new FileInfo(ProjectPath));
-                txt_Status.Text = "Project " + ProjectPath + " opened";
+                richTextBox1.Text += dateTimeNow + "Project " + ProjectPath + " opened" + System.Environment.NewLine;
 
             }
             catch (Exception ex)
             {
-                txt_Status.Text = "Error while opening project" + ex.Message;
+                richTextBox1.Text += dateTimeNow + "Error while opening project" + ex.Message + System.Environment.NewLine;
             }
             //btn_CompileHW.Enabled = true;
             btn_CloseProject.Enabled = true;
@@ -165,7 +165,7 @@ namespace StartOpenness
         private void SaveProject(object sender, EventArgs e)
         {
             MyProject.Save();
-            txt_Status.Text = "Project saved";
+            richTextBox1.Text += dateTimeNow + "Project saved" + System.Environment.NewLine;
         }
         /// <summary>
         /// SIEMENS function - event for a CLOSE PROJECT button
@@ -175,7 +175,7 @@ namespace StartOpenness
         private void CloseProject(object sender, EventArgs e)
         {
             MyProject.Close();
-            txt_Status.Text = "Project closed";
+            richTextBox1.Text += dateTimeNow + "Project closed" + System.Environment.NewLine;
             btn_SearchProject.Enabled = true;
             btn_CloseProject.Enabled = false;
             btn_Save.Enabled = false;
@@ -318,39 +318,19 @@ namespace StartOpenness
                     // данная проверка не пропускает ни PLC ни HMI
                     if (deviceItem.Name == name || device.Name == devname || device.Name == name)
                     {
-                        SoftwareContainer softwareContainer = deviceItem.GetService<SoftwareContainer>();
-                        if (softwareContainer != null)
-                        {
-                            if (softwareContainer.Software is PlcSoftware)
-                            {
-                                PlcSoftware controllerTarget = softwareContainer.Software as PlcSoftware;
-                                if (controllerTarget != null)
-                                {
-                                    found = true;
-                                }
-                            }
-                            if (softwareContainer.Software is HmiTarget)
-                            {
-                                HmiTarget hmitarget = softwareContainer.Software as HmiTarget;
-                                if (hmitarget != null)
-                                {
-                                    found = true;
-                                }
-
-                            }
-                        }
+                       found = true;
                     }
                 }
             }
             if (found == true)
             {
-                txt_Status.Text = "Device " + deviceItemName + " already exists";
+                richTextBox1.Text += dateTimeNow + "Device " + deviceItemName + " already exists" + System.Environment.NewLine;
             }
             else
             {
                 Device createdDeviceName = MyProject.Devices.CreateWithItem(MLFB, name, devname);
 
-                txt_Status.Text = "Add Device Name: " + name + " with Order Number: " + typeNumber + " and Firmware Version: " + versionNumber;
+                richTextBox1.Text += dateTimeNow + "Add Device Name: " + name + " with Order Number: " + typeNumber + " and Firmware Version: " + versionNumber + System.Environment.NewLine;
             }
 
             //btn_AddHW.Enabled = true;
@@ -374,22 +354,22 @@ namespace StartOpenness
                     }
                     if (MyTiaPortal.Projects.Count <= 0)
                     {
-                        txt_Status.Text = "No TIA Portal Project was found!";
+                        richTextBox1.Text += dateTimeNow + "No TIA Portal Project was found!" + System.Environment.NewLine;
                         btn_Connect.Enabled = true;
                         return;
                     }
                     MyProject = MyTiaPortal.Projects[0];
                     break;
                 case 0:
-                    txt_Status.Text = "No running instance of TIA Portal was found!";
+                    richTextBox1.Text += dateTimeNow + "No running instance of TIA Portal was found!" + System.Environment.NewLine;
                     btn_Connect.Enabled = true;
                     return;
                 default:
-                    txt_Status.Text = "More than one running instance of TIA Portal was found!";
+                    richTextBox1.Text += dateTimeNow + "More than one running instance of TIA Portal was found!" + System.Environment.NewLine;
                     btn_Connect.Enabled = true;
                     return;
             }
-            txt_Status.Text = _tiaProcess.ProjectPath.ToString();
+            richTextBox1.Text += dateTimeNow + "Connected to project " +_tiaProcess.ProjectPath.ToString() + System.Environment.NewLine;
             btn_Start.Enabled = false;
             btn_Connect.Enabled = true;
             btn_Dispose.Enabled = true;
@@ -513,29 +493,36 @@ namespace StartOpenness
         }
         private void button3_Click(object sender, EventArgs e)
         {
+            bool foundSubnet = false;
             SubnetComposition subnets = null;
-            try
+            Subnet MySubnet=null;
+
+            subnets = MyProject.Subnets;
+            foreach (var subnet in subnets)
             {
-                subnets = MyProject.Subnets;
-                subnets.Create("System:Subnet.Ethernet", dataGridView1.Rows[1].Cells[4].Value.ToString());
+                if (subnet.Name== dataGridView1.Rows[1].Cells[4].Value.ToString())
+                {
+                        foundSubnet = true;
+                        MySubnet = subnet;
+                }
             }
-            catch (Exception ex)
+            if (foundSubnet)
             {
-
-                richTextBox1.Text =subnets.ToString() + System.Environment.NewLine + ex.Message + System.Environment.NewLine;
+                richTextBox1.Text += dateTimeNow + "Subnet with name [" + dataGridView1.Rows[1].Cells[4].Value.ToString() + "] alredy exist" + System.Environment.NewLine;
             }
-
-
-
+            else
+            {
+                MySubnet = subnets.Create("System:Subnet.Ethernet", dataGridView1.Rows[1].Cells[4].Value.ToString());
+            }
 
             NetworkInterface network = null; ;
             Node node;
-            IoSystem ioSystem = null;
-            //device.name
+            
+            
             int counter_device = 0;
             int counter_Dev1 = 0;
             int counter_Dev2 = 0;
-           
+            
 
             foreach (Device device in MyProject.Devices)
             {
@@ -547,27 +534,23 @@ namespace StartOpenness
                         {
                             network = MyProject.Devices[counter_device].DeviceItems[counter_Dev1].DeviceItems[counter_Dev2].GetService<NetworkInterface>();
                             node = network.Nodes[0];
-                            foreach (Subnet net in MyProject.Subnets)
+                            // внизу мы берем подсеть к которой подключени нод, надо для проверки
+                            Subnet sub = node.ConnectedSubnet;
+
+                            if (node!=null)
                             {
-                                try
+                                // Проверка соответствия имен заданной сети и сети к которой подключен нод
+                                if (MySubnet.Name==sub.Name)
                                 {
-                                    if (node != null)
-                                    {
-                                        node.ConnectToSubnet(net);
-                                    }
-
+                                    richTextBox1.Text += dateTimeNow + MyProject.Devices[counter_device].Name + " is already connected to [" + MySubnet.Name + "]" + System.Environment.NewLine;
                                 }
-                                catch (Exception ex)
+                                else
                                 {
-
-                                    richTextBox1.Text = node.Name + System.Environment.NewLine+ex.Message+System.Environment.NewLine;
+                                    node.ConnectToSubnet(MySubnet);
                                 }
-
-                                node = null;
-
                             }
-
-
+                           node = null;
+                            
                         }
                         counter_Dev2++;
 
@@ -578,17 +561,7 @@ namespace StartOpenness
                 counter_device++;
                 counter_Dev1 = 0;
             }
-            //MessageBox.Show(network.InterfaceOperatingMode.ToString());
-            //MessageBox.Show(InterfaceOperatingModes.IoController.ToString());
-            //if ((network.InterfaceOperatingMode & InterfaceOperatingModes.IoController) != 0)
-            //{
-            //    IoControllerComposition ioControllers = network.IoControllers;
-            //    IoController ioController = ioControllers.First();
-            //    if(ioController != null)
-            //    {
-            //        ioSystem = ioController.CreateIoSystem("io system");
-            //    }
-            //}
+            
         }
         private void button4_Click(object sender, EventArgs e)
         {
@@ -772,11 +745,11 @@ namespace StartOpenness
             if (hwObject.CanPlugNew("OrderNumber:6ES7 521-1BH10-0AA0/V1.0", "DI 16x24VDC BA_1", 3))
             {
                 DeviceItem newPluggedDeviceItem = hwObject.PlugNew("OrderNumber:6ES7 521-1BH10-0AA0/V1.0", "DI 16x24VDC BA_1", 3);
-                MessageBox.Show("Bingo!");
+                richTextBox1.Text+= dateTimeNow + "Bingo!" + System.Environment.NewLine;
             }
             else
             {
-                MessageBox.Show(PLC_1.DeviceItems[0].Name);
+                richTextBox1.Text += dateTimeNow + PLC_1.DeviceItems[0].Name + System.Environment.NewLine;
             }
 
         }
@@ -792,7 +765,7 @@ namespace StartOpenness
             catch (Exception ex)
             {
 
-                richTextBox1.Text = ex.Message;
+                richTextBox1.Text += dateTimeNow + ex.Message + System.Environment.NewLine;
             }
             
 

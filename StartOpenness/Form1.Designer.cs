@@ -41,25 +41,12 @@ namespace StartOpenness
             this.btn_SearchProject = new System.Windows.Forms.Button();
             this.txt_Status = new System.Windows.Forms.TextBox();
             this.btn_CloseProject = new System.Windows.Forms.Button();
-            this.btn_CompileHW = new System.Windows.Forms.Button();
-            this.txt_Device = new System.Windows.Forms.TextBox();
             this.btn_Save = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
             this.grp_TIA = new System.Windows.Forms.GroupBox();
             this.rdb_WithoutUI = new System.Windows.Forms.RadioButton();
             this.rdb_WithUI = new System.Windows.Forms.RadioButton();
-            this.grp_Compile = new System.Windows.Forms.GroupBox();
             this.grp_Project = new System.Windows.Forms.GroupBox();
             this.btn_Connect = new System.Windows.Forms.Button();
-            this.btn_AddHW = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.txt_Version = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.txt_OrderNo = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.txt_AddDevice = new System.Windows.Forms.TextBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.btn_OpnExel = new System.Windows.Forms.Button();
             this.btn_AddDevFrExcell = new System.Windows.Forms.Button();
@@ -74,10 +61,10 @@ namespace StartOpenness
             this.button11 = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.helpProvider1 = new System.Windows.Forms.HelpProvider();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.grp_TIA.SuspendLayout();
-            this.grp_Compile.SuspendLayout();
             this.grp_Project.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -132,25 +119,6 @@ namespace StartOpenness
             this.btn_CloseProject.UseVisualStyleBackColor = true;
             this.btn_CloseProject.Click += new System.EventHandler(this.CloseProject);
             // 
-            // btn_CompileHW
-            // 
-            this.btn_CompileHW.Enabled = false;
-            this.btn_CompileHW.Location = new System.Drawing.Point(37, 85);
-            this.btn_CompileHW.Name = "btn_CompileHW";
-            this.btn_CompileHW.Size = new System.Drawing.Size(115, 36);
-            this.btn_CompileHW.TabIndex = 12;
-            this.btn_CompileHW.Text = "Compile";
-            this.btn_CompileHW.UseVisualStyleBackColor = true;
-            this.btn_CompileHW.Click += new System.EventHandler(this.Compile);
-            // 
-            // txt_Device
-            // 
-            this.txt_Device.Location = new System.Drawing.Point(37, 41);
-            this.txt_Device.Name = "txt_Device";
-            this.txt_Device.Size = new System.Drawing.Size(115, 20);
-            this.txt_Device.TabIndex = 13;
-            this.txt_Device.Text = "PLC_1";
-            // 
             // btn_Save
             // 
             this.btn_Save.Enabled = false;
@@ -161,15 +129,6 @@ namespace StartOpenness
             this.btn_Save.Text = "Save Project";
             this.btn_Save.UseVisualStyleBackColor = true;
             this.btn_Save.Click += new System.EventHandler(this.SaveProject);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(37, 24);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(97, 13);
-            this.label1.TabIndex = 15;
-            this.label1.Text = "Type Device name";
             // 
             // grp_TIA
             // 
@@ -206,18 +165,6 @@ namespace StartOpenness
             this.rdb_WithUI.Text = "With User Interface";
             this.rdb_WithUI.UseVisualStyleBackColor = true;
             // 
-            // grp_Compile
-            // 
-            this.grp_Compile.Controls.Add(this.label1);
-            this.grp_Compile.Controls.Add(this.txt_Device);
-            this.grp_Compile.Controls.Add(this.btn_CompileHW);
-            this.grp_Compile.Location = new System.Drawing.Point(586, 12);
-            this.grp_Compile.Name = "grp_Compile";
-            this.grp_Compile.Size = new System.Drawing.Size(185, 203);
-            this.grp_Compile.TabIndex = 17;
-            this.grp_Compile.TabStop = false;
-            this.grp_Compile.Text = "Compile";
-            // 
             // grp_Project
             // 
             this.grp_Project.Controls.Add(this.btn_Connect);
@@ -240,90 +187,6 @@ namespace StartOpenness
             this.btn_Connect.Text = "Connect to open TIA Project";
             this.btn_Connect.UseVisualStyleBackColor = true;
             this.btn_Connect.Click += new System.EventHandler(this.btn_ConnectTIA);
-            // 
-            // btn_AddHW
-            // 
-            this.btn_AddHW.Enabled = false;
-            this.btn_AddHW.Location = new System.Drawing.Point(431, 159);
-            this.btn_AddHW.Name = "btn_AddHW";
-            this.btn_AddHW.Size = new System.Drawing.Size(115, 36);
-            this.btn_AddHW.TabIndex = 12;
-            this.btn_AddHW.Text = "Add Device";
-            this.btn_AddHW.UseVisualStyleBackColor = true;
-            this.btn_AddHW.Click += new System.EventHandler(this.btn_AddHW_Click);
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.txt_Version);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.txt_OrderNo);
-            this.groupBox1.Location = new System.Drawing.Point(395, 12);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(185, 203);
-            this.groupBox1.TabIndex = 18;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Add";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(35, 105);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(69, 13);
-            this.label4.TabIndex = 22;
-            this.label4.Text = "Type Version";
-            // 
-            // txt_Version
-            // 
-            this.txt_Version.Location = new System.Drawing.Point(35, 122);
-            this.txt_Version.Name = "txt_Version";
-            this.txt_Version.Size = new System.Drawing.Size(115, 20);
-            this.txt_Version.TabIndex = 21;
-            this.txt_Version.Text = "15.1.0.0";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(36, 65);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(74, 13);
-            this.label3.TabIndex = 20;
-            this.label3.Text = "Type Order Nr";
-            // 
-            // txt_OrderNo
-            // 
-            this.txt_OrderNo.Location = new System.Drawing.Point(36, 82);
-            this.txt_OrderNo.Name = "txt_OrderNo";
-            this.txt_OrderNo.Size = new System.Drawing.Size(115, 20);
-            this.txt_OrderNo.TabIndex = 19;
-            this.txt_OrderNo.Text = "6AV2 123-2MA03-0AX0";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(431, 37);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(97, 13);
-            this.label2.TabIndex = 15;
-            this.label2.Text = "Type Device name";
-            // 
-            // txt_AddDevice
-            // 
-            this.txt_AddDevice.Location = new System.Drawing.Point(431, 54);
-            this.txt_AddDevice.Name = "txt_AddDevice";
-            this.txt_AddDevice.Size = new System.Drawing.Size(115, 20);
-            this.txt_AddDevice.TabIndex = 13;
-            this.txt_AddDevice.Text = "HMI_test";
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Location = new System.Drawing.Point(777, 12);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(185, 203);
-            this.groupBox2.TabIndex = 18;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Group";
             // 
             // dataGridView1
             // 
@@ -359,7 +222,7 @@ namespace StartOpenness
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 58);
             this.button3.TabIndex = 22;
-            this.button3.Text = "Create single subnet";
+            this.button3.Text = "Create subnet connect HW";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
@@ -369,7 +232,7 @@ namespace StartOpenness
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 58);
             this.button4.TabIndex = 23;
-            this.button4.Text = "Create subnet connected to HW";
+            this.button4.Text = "None";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
@@ -377,10 +240,11 @@ namespace StartOpenness
             // 
             this.button5.Location = new System.Drawing.Point(331, 599);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(75, 23);
+            this.button5.Size = new System.Drawing.Size(75, 58);
             this.button5.TabIndex = 24;
-            this.button5.Text = "button5";
+            this.button5.Text = "all devices";
             this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // button6
             // 
@@ -395,19 +259,21 @@ namespace StartOpenness
             // 
             this.button7.Location = new System.Drawing.Point(493, 599);
             this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(75, 23);
+            this.button7.Size = new System.Drawing.Size(75, 58);
             this.button7.TabIndex = 26;
-            this.button7.Text = "button7";
+            this.button7.Text = "Add IM";
             this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // button8
             // 
             this.button8.Location = new System.Drawing.Point(575, 599);
             this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(75, 23);
+            this.button8.Size = new System.Drawing.Size(75, 58);
             this.button8.TabIndex = 27;
-            this.button8.Text = "button8";
+            this.button8.Text = "Add device item to PLC";
             this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // button9
             // 
@@ -456,12 +322,21 @@ namespace StartOpenness
             this.comboBox1.Size = new System.Drawing.Size(77, 21);
             this.comboBox1.TabIndex = 32;
             // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Location = new System.Drawing.Point(395, 13);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(567, 202);
+            this.richTextBox1.TabIndex = 33;
+            this.richTextBox1.Text = "";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Gainsboro;
             this.ClientSize = new System.Drawing.Size(976, 669);
+            this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.button11);
@@ -476,24 +351,14 @@ namespace StartOpenness
             this.Controls.Add(this.btn_AddDevFrExcell);
             this.Controls.Add(this.btn_OpnExel);
             this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.txt_AddDevice);
             this.Controls.Add(this.grp_Project);
-            this.Controls.Add(this.btn_AddHW);
-            this.Controls.Add(this.grp_Compile);
             this.Controls.Add(this.grp_TIA);
             this.Controls.Add(this.txt_Status);
-            this.Controls.Add(this.groupBox1);
             this.Name = "Form1";
             this.Text = "Openness_Start";
             this.grp_TIA.ResumeLayout(false);
             this.grp_TIA.PerformLayout();
-            this.grp_Compile.ResumeLayout(false);
-            this.grp_Compile.PerformLayout();
             this.grp_Project.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -509,25 +374,12 @@ namespace StartOpenness
         private System.Windows.Forms.Button btn_SearchProject;
         private System.Windows.Forms.TextBox txt_Status;
         private System.Windows.Forms.Button btn_CloseProject;
-        private System.Windows.Forms.Button btn_CompileHW;
-        private System.Windows.Forms.TextBox txt_Device;
         private System.Windows.Forms.Button btn_Save;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox grp_TIA;
         private System.Windows.Forms.RadioButton rdb_WithoutUI;
         private System.Windows.Forms.RadioButton rdb_WithUI;
-        private System.Windows.Forms.GroupBox grp_Compile;
         private System.Windows.Forms.GroupBox grp_Project;
-        private System.Windows.Forms.Button btn_AddHW;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox txt_AddDevice;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox txt_OrderNo;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox txt_Version;
         private System.Windows.Forms.Button btn_Connect;
-        private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Button btn_OpnExel;
         private System.Windows.Forms.Button btn_AddDevFrExcell;
@@ -542,6 +394,8 @@ namespace StartOpenness
         private System.Windows.Forms.Button button11;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.HelpProvider helpProvider1;
+        private System.Windows.Forms.RichTextBox richTextBox1;
     }
 }
 

@@ -39,7 +39,6 @@ namespace StartOpenness
             this.btn_Start = new System.Windows.Forms.Button();
             this.btn_Dispose = new System.Windows.Forms.Button();
             this.btn_SearchProject = new System.Windows.Forms.Button();
-            this.txt_Status = new System.Windows.Forms.TextBox();
             this.btn_CloseProject = new System.Windows.Forms.Button();
             this.btn_Save = new System.Windows.Forms.Button();
             this.grp_TIA = new System.Windows.Forms.GroupBox();
@@ -98,14 +97,6 @@ namespace StartOpenness
             this.btn_SearchProject.Text = "Open Project";
             this.btn_SearchProject.UseVisualStyleBackColor = true;
             this.btn_SearchProject.Click += new System.EventHandler(this.SearchProject);
-            // 
-            // txt_Status
-            // 
-            this.txt_Status.BackColor = System.Drawing.SystemColors.Menu;
-            this.txt_Status.Location = new System.Drawing.Point(12, 221);
-            this.txt_Status.Name = "txt_Status";
-            this.txt_Status.Size = new System.Drawing.Size(950, 20);
-            this.txt_Status.TabIndex = 7;
             // 
             // btn_CloseProject
             // 
@@ -213,7 +204,7 @@ namespace StartOpenness
             this.btn_AddDevFrExcell.TabIndex = 21;
             this.btn_AddDevFrExcell.Text = "Add Device from Excel";
             this.btn_AddDevFrExcell.UseVisualStyleBackColor = true;
-            this.btn_AddDevFrExcell.Click += new System.EventHandler(this.btn_AddDevFrExcell_Click);
+            this.btn_AddDevFrExcell.Click += new System.EventHandler(this.button2_Click);
             // 
             // button3
             // 
@@ -231,7 +222,7 @@ namespace StartOpenness
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 58);
             this.button4.TabIndex = 23;
-            this.button4.Text = "None";
+            this.button4.Text = "IOsubnet";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
@@ -320,6 +311,7 @@ namespace StartOpenness
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(77, 21);
             this.comboBox1.TabIndex = 32;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // richTextBox1
             // 
@@ -352,7 +344,6 @@ namespace StartOpenness
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.grp_Project);
             this.Controls.Add(this.grp_TIA);
-            this.Controls.Add(this.txt_Status);
             this.Name = "Form1";
             this.Text = "Openness_Start";
             this.grp_TIA.ResumeLayout(false);
@@ -360,7 +351,6 @@ namespace StartOpenness
             this.grp_Project.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -371,7 +361,6 @@ namespace StartOpenness
         private System.Windows.Forms.Button btn_Start;
         private System.Windows.Forms.Button btn_Dispose;
         private System.Windows.Forms.Button btn_SearchProject;
-        private System.Windows.Forms.TextBox txt_Status;
         private System.Windows.Forms.Button btn_CloseProject;
         private System.Windows.Forms.Button btn_Save;
         private System.Windows.Forms.GroupBox grp_TIA;

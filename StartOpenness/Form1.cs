@@ -8,10 +8,12 @@ using Siemens.Engineering.HW.Features;
 using Siemens.Engineering.SW;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+
 using _Excel = Microsoft.Office.Interop.Excel;
 
 namespace StartOpenness
@@ -19,17 +21,21 @@ namespace StartOpenness
     public partial class Form1 : Form
     {
         private static TiaPortalProcess _tiaProcess;
-
+       
+        public  Subnet MySubnet_test
+        {
+            get; set;
+        }
+        public string MyFileName
+        {
+            get; set;
+        }
         public TiaPortal MyTiaPortal
         {
             get; set;
         }
         public string dateTimeNow => "[" + DateTime.Now + "] ";
         public Project MyProject
-        {
-            get; set;
-        }
-        public Node MyNode
         {
             get; set;
         }
@@ -41,12 +47,7 @@ namespace StartOpenness
             CurrentDomain.AssemblyResolve += new ResolveEventHandler(MyResolver);
             richTextBox1.Text = null;
         }
-        /// <summary>
-        /// Function which is called in start after initialization of Form1
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
+        #region Standart buttons no changes  
         private static Assembly MyResolver(object sender, ResolveEventArgs args)
         {
             int index = args.Name.IndexOf(',');
@@ -77,11 +78,7 @@ namespace StartOpenness
 
             return null;
         }
-        /// <summary>
-        /// SIEMENS function - event for a START TIA button
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+       
         private void StartTIA(object sender, EventArgs e)
         {
             if (rdb_WithoutUI.Checked == true)
@@ -101,11 +98,7 @@ namespace StartOpenness
             btn_Start.Enabled = false;
 
         }
-        /// <summary>
-        /// SIEMENS function - event for a DISPOSE TIA button
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+       
         private void DisposeTIA(object sender, EventArgs e)
         {
             MyTiaPortal.Dispose();
@@ -118,11 +111,7 @@ namespace StartOpenness
             btn_Save.Enabled = false;
 
         }
-        /// <summary>
-        /// SIEMENS function - event for a OPEN PROJECT button
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        
         private void SearchProject(object sender, EventArgs e)
         {
             OpenFileDialog fileSearch = new OpenFileDialog();
@@ -135,10 +124,7 @@ namespace StartOpenness
                 OpenProject(ProjectPath);
             }
         }
-        /// <summary>
-        /// Function which is called in upper event
-        /// </summary>
-        /// <param name="ProjectPath"></param>
+       
         private void OpenProject(string ProjectPath)
         {
             try
@@ -157,21 +143,13 @@ namespace StartOpenness
             btn_Save.Enabled = true;
             //btn_AddHW.Enabled = true;
         }
-        /// <summary>
-        /// SIEMENS function - event for a SAVE PROJECT button
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        
         private void SaveProject(object sender, EventArgs e)
         {
             MyProject.Save();
             richTextBox1.Text += dateTimeNow + "Project saved" + System.Environment.NewLine;
         }
-        /// <summary>
-        /// SIEMENS function - event for a CLOSE PROJECT button
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+       
         private void CloseProject(object sender, EventArgs e)
         {
             MyProject.Close();
@@ -181,123 +159,10 @@ namespace StartOpenness
             btn_Save.Enabled = false;
             //btn_CompileHW.Enabled = false;
         }
-        /// <summary>
-        /// SIEMENS function - event for a COMPILE button
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        //private void Compile(object sender, EventArgs e)
-        //{
-        //    //btn_CompileHW.Enabled = false;
-        //    string devname = txt_Device.Text;
-        //    bool found = false;
-        //    foreach (Device device in MyProject.Devices)
-        //    {
-        //        DeviceItemComposition deviceItemAggregation = device.DeviceItems;
-        //        foreach (DeviceItem deviceItem in deviceItemAggregation)
-        //        {
-        //            if (deviceItem.Name == devname || device.Name == devname)
-        //            {
-        //                SoftwareContainer softwareContainer = deviceItem.GetService<SoftwareContainer>();
-        //                if (softwareContainer != null)
-        //                {
-        //                    if (softwareContainer.Software is PlcSoftware)
-        //                    {
-        //                        PlcSoftware controllerTarget = softwareContainer.Software as PlcSoftware;
-        //                        if (controllerTarget != null)
-        //                        {
-        //                            found = true;
-        //                            ICompilable compiler = controllerTarget.GetService<ICompilable>();
-        //                            CompilerResult result = compiler.Compile();
-        //                            txt_Status.Text = "Compiling of " + controllerTarget.Name + ": State: " + result.State + " / Warning Count: " + result.WarningCount + " / Error Count: " + result.ErrorCount;
-        //                        }
-        //                    }
-        //                    if (softwareContainer.Software is HmiTarget)
-        //                    {
-        //                        HmiTarget hmitarget = softwareContainer.Software as HmiTarget;
-        //                        if (hmitarget != null)
-        //                        {
-        //                            found = true;
-        //                            ICompilable compiler = hmitarget.GetService<ICompilable>();
-        //                            CompilerResult result = compiler.Compile();
-        //                            txt_Status.Text = "Compiling of " + hmitarget.Name + ": State: " + result.State + " / Warning Count: " + result.WarningCount + " / Error Count: " + result.ErrorCount;
-        //                        }
 
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //    if (found == false)
-        //    {
-        //        txt_Status.Text = "Found no device with name " + txt_Device.Text;
-        //    }
-
-        //    //btn_CompileHW.Enabled = true;
-        //}
-        private void btn_AddHW_Click(object sender, EventArgs e)
-        {
-            //AddHW();
-        }
-        //private void AddHW()
-        //{
-        //    //btn_AddHW.Enabled = false;
-        //    string MLFB = "OrderNumber:" + txt_OrderNo.Text + "/" + txt_Version.Text;
-
-        //    string name = txt_AddDevice.Text;
-        //    string devname = "station" + txt_AddDevice.Text;
-        //    bool found = false;
-        //    foreach (Device device in MyProject.Devices)
-        //    {
-        //        DeviceItemComposition deviceItemAggregation = device.DeviceItems;
-        //        foreach (DeviceItem deviceItem in deviceItemAggregation)
-        //        {
-        //            // Ошибка при проверке имен 'deviceItem.Name == devname || device.Name == devname' 
-        //            //  device.Name == devname => device.Name == name это частично правильно
-        //            // добавлено еще одно условие проверки именно для HMI и в итоге получилось 
-        //            // if (deviceItem.Name == name || device.Name == devname|| device.Name == name)
-        //            // данная проверка не пропускает ни PLC ни HMI
-        //            if (deviceItem.Name == name || device.Name == devname || device.Name == name)
-        //            {
-        //                SoftwareContainer softwareContainer = deviceItem.GetService<SoftwareContainer>();
-        //                if (softwareContainer != null)
-        //                {
-        //                    if (softwareContainer.Software is PlcSoftware)
-        //                    {
-        //                        PlcSoftware controllerTarget = softwareContainer.Software as PlcSoftware;
-        //                        if (controllerTarget != null)
-        //                        {
-        //                            found = true;
-
-        //                        }
-        //                    }
-        //                    if (softwareContainer.Software is HmiTarget)
-        //                    {
-        //                        HmiTarget hmitarget = softwareContainer.Software as HmiTarget;
-        //                        if (hmitarget != null)
-        //                        {
-        //                            found = true;
-
-        //                        }
-
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //    if (found == true)
-        //    {
-        //        //txt_Status.Text = "Device " + txt_Device.Text + " already exists";
-        //    }
-        //    else
-        //    {
-        //        Device deviceName = MyProject.Devices.CreateWithItem(MLFB, name, devname);
-        //        //Device deviceName = MyProject.Devices.CreateWithItem("OrderNumber:6AV2 124-0MC01-0AX0/15.1.0.0", name, devname);
-        //        //txt_Status.Text = "Add Device Name: " + name + " with Order Number: " + txt_OrderNo.Text + " and Firmware Version: " + txt_Version.Text;
-        //    }
-
-        //    //btn_AddHW.Enabled = true;
-        //}
+        #endregion
+      
+        
         private void AddHW(string deviceItemName, string deviceName, string typeNumber, string versionNumber)
         {
             //btn_AddHW.Enabled = false;
@@ -379,16 +244,65 @@ namespace StartOpenness
             btn_Save.Enabled = true;
             //btn_AddHW.Enabled = true;
         }
-        /// <summary>
-        /// функция открытия и выбора Ексель файла
-        /// добавлена переменная 
-        /// </summary>
-        /// <param name="UsingDragDrop"></param>
-        /// <param name="e"></param>
-        /// <param name="sheet">переменная которая устанавливает номер листа Ексель 
-        /// по умолчанию после открытия файла устанавливается на 1 вкладку
-        /// в будущем с помощью Комбобокс можно будет выбирать номер листа</param>
-        private void GetObjectsData(bool UsingDragDrop, DragEventArgs e = null, int sheet = 1)
+        private void ItinializeCombobox1(string fileName)
+        {
+            if (fileName != string.Empty)
+            {
+                //MessageBox.Show(fileName);
+                _Application excel = new _Excel.Application();
+                Workbook wb = excel.Workbooks.Open(fileName);
+                // Провубю вставить выбор по номеру в Комбобоксе
+                List<string> sheetName = new List<string>();
+                foreach (Worksheet item in wb.Worksheets)
+                {
+                    sheetName.Add(item.Name);
+                }
+                comboBox1.DataSource = sheetName;
+                wb.Close();
+                excel.Quit();
+            }
+        }
+        private void GetObjectsData(string fileName)
+        {
+            
+            if (fileName != string.Empty)
+            {
+
+                //MessageBox.Show(fileName);
+                _Application excel = new _Excel.Application();
+                Workbook wb = excel.Workbooks.Open(fileName);
+                // Провубю вставить выбор по номеру в Комбобоксе
+                Worksheet ws = wb.Worksheets[comboBox1.SelectedItem];
+                Range ur = ws.UsedRange;
+                
+                // необходимо переделать установку наименования Датагрид таким оразом,
+                // что бы названия брались с файла, а не устанавливались в ручную
+
+
+                dataGridView1.Columns.Clear();
+                for (int k = 1; k <= ur.Columns.Count; k++)
+                {
+                    dataGridView1.Columns.Add(ur.Cells[1, k].Text, ur.Cells[2, k].Text);
+                }
+                
+                dataGridView1.Rows.Clear();
+
+                string[] excellRows = new string[ur.Columns.Count];
+                // Создаю массив для записи значений каждой ячейки строки для дальшего добавления в ДГВ - datagridwiev
+                for (int r = 3; r <= ur.Rows.Count; r++)
+                {
+                    for (int i = 0; i < ur.Columns.Count; i++)
+                    {
+                        excellRows[i] = ur.Cells[r, i + 1].Text;
+                    }
+                    dataGridView1.Rows.Add(excellRows);
+                   
+                }
+                wb.Close();
+                excel.Quit();
+            }
+        }
+        private string FileDialogOpen(bool UsingDragDrop, DragEventArgs e = null)
         {
             string fileName;
 
@@ -405,81 +319,15 @@ namespace StartOpenness
                 ofd.ShowDialog();
                 fileName = ofd.FileName;
             }
-
-            if (fileName != string.Empty)
-            {
-                //MessageBox.Show(fileName);
-                _Application excel = new _Excel.Application();
-                Workbook wb = excel.Workbooks.Open(fileName);
-                Worksheet ws = wb.Worksheets[sheet];
-                Range ur = ws.UsedRange;
-                // необходимо переделать установку наименования Датагрид таким оразом,
-                // что бы названия брались с файла, а не устанавливались в ручную
-
-                dataGridView1.Columns.Clear();
-                for (int k = 1; k <= ur.Columns.Count; k++)
-                {
-                    dataGridView1.Columns.Add(ur.Cells[1, k].Text, ur.Cells[2, k].Text);
-                }
-                #region изначальное добавление наименования колонок
-                //dataGridView1.Columns.Add("Column1", "Name");
-                //dataGridView1.Columns.Add("Column2", "Type");
-                //dataGridView1.Columns.Add("Column3", "Desc EN");
-                //dataGridView1.Columns.Add("Column4", "Desc UA");
-                //dataGridView1.Columns.Add("Column5", "Desc RU");
-                //dataGridView1.Columns.Add("Column6", "Desc DE");
-                //dataGridView1.Columns.Add("Column7", "Desc IT");
-                //dataGridView1.Columns.Add(ur.Cells[1, 1 + 7].Text, ur.Cells[2, 1 + 7].Text);
-                //dataGridView1.Columns.Add(ur.Cells[1, 1 + 8].Text, ur.Cells[2, 1 + 8].Text);
-                //dataGridView1.Columns.Add(ur.Cells[1, 1 + 9].Text, ur.Cells[2, 1 + 9].Text);
-                //dataGridView1.Columns.Add(ur.Cells[1, 1 + 10].Text, ur.Cells[2, 1 + 10].Text);
-                //dataGridView1.Columns.Add(ur.Cells[1, 1 + 11].Text, ur.Cells[2, 1 + 11].Text);
-                //dataGridView1.Columns.Add(ur.Cells[1, 1 + 12].Text, ur.Cells[2, 1 + 12].Text);
-                //dataGridView1.Columns.Add(ur.Cells[1, 1 + 13].Text, ur.Cells[2, 1 + 13].Text);
-                //dataGridView1.Columns.Add(ur.Cells[1, 1 + 14].Text, ur.Cells[2, 1 + 14].Text);
-                //dataGridView1.Columns.Add(ur.Cells[1, 1 + 15].Text, ur.Cells[2, 1 + 15].Text);
-                //dataGridView1.Columns.Add(ur.Cells[1, 1 + 16].Text, ur.Cells[2, 1 + 16].Text);
-                #endregion
-                dataGridView1.Rows.Clear();
-
-                string[] excellRows = new string[ur.Columns.Count];
-                // Создаю массив для записи значений каждой ячейки строки для дальшего добавления в ДГВ - datagridwiev
-                for (int r = 3; r <= ur.Rows.Count; r++)
-                {
-                    for (int i = 0; i < ur.Columns.Count; i++)
-                    {
-                        excellRows[i] = ur.Cells[r, i + 1].Text;
-                    }
-                    dataGridView1.Rows.Add(excellRows);
-                    #region изначальное добавление строк
-                    //dataGridView1.Rows.Add(ur.Cells[r, 1].Text,
-                    //    ur.Cells[r, 2].Text,
-                    //    ur.Cells[r, 3].Text,
-                    //    ur.Cells[r, 4].Text,
-                    //    ur.Cells[r, 5].Text,
-                    //    ur.Cells[r, 6].Text,
-                    //    ur.Cells[r, 7].Text,
-                    //    ur.Cells[r, 8].Text,
-                    //    ur.Cells[r, 9].Text,
-                    //    ur.Cells[r, 10].Text,
-                    //    ur.Cells[r, 11].Text,
-                    //    ur.Cells[r, 12].Text,
-                    //    ur.Cells[r, 13].Text,
-                    //    ur.Cells[r, 14].Text,
-                    //    ur.Cells[r, 15].Text,
-                    //    ur.Cells[r, 16].Text,
-                    //    ur.Cells[r, 17].Text);
-                    #endregion
-                }
-                wb.Close();
-                excel.Quit();
-            }
+            return fileName;
         }
         private void btn_OpnExel_Click(object sender, EventArgs e)
         {
-            GetObjectsData(false);
+            MyFileName = FileDialogOpen(false);
+            ItinializeCombobox1(MyFileName);
+           
         }
-        private void btn_AddDevFrExcell_Click(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e)
         {
             for (int i = 0; i < dataGridView1.Rows.Count; i++)
             {
@@ -493,12 +341,11 @@ namespace StartOpenness
         }
         private void button3_Click(object sender, EventArgs e)
         {
+            Subnet MySubnet = null;
             bool foundSubnet = false;
-            SubnetComposition subnets = null;
-            Subnet MySubnet=null;
 
-            subnets = MyProject.Subnets;
-            foreach (var subnet in subnets)
+            
+            foreach (var subnet in MyProject.Subnets)
             {
                 if (subnet.Name== dataGridView1.Rows[1].Cells[4].Value.ToString())
                 {
@@ -512,9 +359,8 @@ namespace StartOpenness
             }
             else
             {
-                MySubnet = subnets.Create("System:Subnet.Ethernet", dataGridView1.Rows[1].Cells[4].Value.ToString());
+                MySubnet = MyProject.Subnets.Create("System:Subnet.Ethernet", dataGridView1.Rows[1].Cells[4].Value.ToString());
             }
-
             NetworkInterface network = null; ;
             Node node;
             
@@ -536,8 +382,14 @@ namespace StartOpenness
                             node = network.Nodes[0];
                             // внизу мы берем подсеть к которой подключени нод, надо для проверки
                             Subnet sub = node.ConnectedSubnet;
-
-                            if (node!=null)
+                            // если интерфейс подключеня в наличии и еще не подключен к сети
+                            if (node != null&&sub==null)
+                            {
+                                node.ConnectToSubnet(MySubnet);
+                                richTextBox1.Text += dateTimeNow + MyProject.Devices[counter_device].Name + " is connected to [" + MySubnet.Name + "]" + System.Environment.NewLine;
+                            }
+                            // если интерфейс подключения в наличии и уже есть подключение к сети
+                            if (node!=null&&sub!=null)
                             {
                                 // Проверка соответствия имен заданной сети и сети к которой подключен нод
                                 if (MySubnet.Name==sub.Name)
@@ -547,6 +399,7 @@ namespace StartOpenness
                                 else
                                 {
                                     node.ConnectToSubnet(MySubnet);
+                                    richTextBox1.Text += dateTimeNow + MyProject.Devices[counter_device].Name + " is connected to [" + MySubnet.Name + "]" + System.Environment.NewLine;
                                 }
                             }
                            node = null;
@@ -565,144 +418,83 @@ namespace StartOpenness
         }
         private void button4_Click(object sender, EventArgs e)
         {
-            //SubnetComposition subnets = MyProject.Subnets;
-            //subnets.Create("System:Subnet.Ethernet", dataGridView1.Rows[1].Cells[4].Value.ToString());
-            //MessageBox.Show(MyProject.Devices[0].DeviceItems[1].DeviceItems[7].Name);
-            //NetworkInterface network = MyProject.Devices[0].DeviceItems[1].DeviceItems[7].GetService<NetworkInterface>();
+            Subnet mySubnet = null;
+            foreach (var subnet in MyProject.Subnets)
+            {
+                mySubnet = subnet;
+                richTextBox1.Text += dateTimeNow + "[" + subnet.Name + "] is founded" + System.Environment.NewLine;
+            }
+            foreach (IoSystem ioSystem1 in mySubnet.IoSystems)
+            {
+                richTextBox1.Text += dateTimeNow + "[" + ioSystem1.Name + "] is founded" + System.Environment.NewLine;
+            }
 
-            //Node node = network.Nodes[0];
-            //Subnet subnet = node.CreateAndConnectToSubnet("111");
-            //network = MyProject.Devices[1].DeviceItems[1].DeviceItems[5].GetService<NetworkInterface>();
-            //node = network.Nodes[0];
-            //node.ConnectToSubnet(subnet);
+            
+          
+
+
+            int counter_device = 0;
+            int counter_Dev1 = 0;
+            int counter_Dev2 = 0;
+            NetworkInterface networkInterface = null;
+            IoSystem ioSystem = null;
+            foreach (Device device in MyProject.Devices)
+            {
+                foreach (DeviceItem Dev1 in device.DeviceItems)
+                {
+                    foreach (DeviceItem Dev2 in Dev1.DeviceItems)
+                    {
+                        if (Dev2.Name == "PROFINET interface_1" || Dev2.Name == "PROFINET interface" || Dev2.Name == "PROFINET Interface_1" || Dev2.Name == "SCALANCE interface_1")
+                        {
+                            networkInterface = MyProject.Devices[counter_device].DeviceItems[counter_Dev1].DeviceItems[counter_Dev2].GetService<NetworkInterface>();
+                            if ((networkInterface.InterfaceOperatingMode & InterfaceOperatingModes.IoController) != 0)
+                            {
+                                richTextBox1.Text += dateTimeNow + " Bingo IO Controller" + Environment.NewLine;
+                                IoControllerComposition ioControllers = networkInterface.IoControllers;
+                                IoController ioController = ioControllers.First();
+                                if (ioController.IoSystem != null)
+                                {
+                                    richTextBox1.Text += dateTimeNow + ioController.IoSystem.Name  + " IO system is already connected" + Environment.NewLine;
+                                }
+                                if ((ioController != null)&&(ioController.IoSystem==null))
+                                {
+                                    ioSystem = ioController.CreateIoSystem("");
+                                }
+                               
+                                
+                            }
+                            if ((networkInterface.InterfaceOperatingMode & InterfaceOperatingModes.IoDevice) != 0)
+                            {
+                                richTextBox1.Text += dateTimeNow + " Bingo IO Device" + Environment.NewLine;
+                                IoConnectorComposition ioConnectors = networkInterface.IoConnectors;
+                                IoConnector ioConnector = ioConnectors.First();
+
+                                if (ioConnector != null)
+                                {
+                                    ioConnector.ConnectToIoSystem(ioSystem);
+                                }
+                            }
+
+
+
+                        }
+                        counter_Dev2++;
+
+                    }
+                    counter_Dev1++;
+                    counter_Dev2 = 0;
+                }
+                counter_device++;
+                counter_Dev1 = 0;
+            }
+
+
+
 
         }
         private void button11_Click(object sender, EventArgs e)
         {
-            #region XXX
-            //MyNode = Node
-            //MessageBox.Show(MyNode.ToString());
-            //SubnetComposition subnets = MyProject.Subnets;
-
-            //NetworkInterface IF_PLC =MyProject.Devices[0].GetService<NetworkInterface>();
-            //Node PLC_Node = IF_PLC.Nodes[0];
-            //Subnet subnet = PLC_Node.CreateAndConnectToSubnet("XXX");
-            //MessageBox.Show(MyProject.Devices[1].DeviceItems[1].Name);
-            //foreach (Device device in MyProject.Devices)
-            //{
-            //    DeviceItemComposition deviceItemAggregation = device.DeviceItems;
-            //    foreach (DeviceItem deviceItem in deviceItemAggregation)
-            //    {
-            //        MessageBox.Show(deviceItem.Name);
-            //    }
-            //}
-            //Node node = MyProject.Devices[0].GetService<Node>();
-            //SubnetComposition subnets = MyProject.Subnets;
-            // Subnet _subnet1 = subnets.Create("System:Subnet.Ethernet", "subnet1");
-            //DeviceItem deviceItem = MyProject.Devices[0].DeviceItems[1];
-            //DeviceItem plc_obj = MyProject.Devices[0].DeviceItems[1].DeviceItems[2];
-            //NetworkInterface @interface = plc_obj.GetService<NetworkInterface>();
-            //Node node = plc_obj.GetService<NetworkInterface>();
-            //Siemens.Engineering.HW.Features.NetworkInterface IF_PLC = plc_obj.GetService<Siemens.Engineering.HW.Features.NetworkInterface>();
-            //NetworkInterface network1 = null;
-            //network1 = MyProject.Devices[0].DeviceItems[1].GetService<Siemens.Engineering.HW.Features.NetworkInterface>();
-            //network1.Nodes.First().ConnectToSubnet(_subnet1);
-            //Siemens.Engineering.HW.Node PLC_Node = IF_PLC.Nodes[0];
-            //PLC_Node.ConnectToSubnet(_subnet1);
-            //Node node = (Node)plc_obj;
-            //MessageBox.Show(plc_obj.Name);
-            //dataGridView1.Columns.Add("Device", "Device");
-            //dataGridView1.Columns.Add("Dev1", "Dev1");
-            //dataGridView1.Columns.Add("Dev2", "Dev2");
-            //dataGridView1.Columns.Add("Dev3", "Dev3");
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    if (!string.IsNullOrEmpty(MyProject.Devices[0].DeviceItems[1].DeviceItems[i].Name))
-            //    {
-            //        dataGridView1.Rows.Add(i.ToString(), MyProject.Devices[0].DeviceItems[2].DeviceItems[i].Name);
-            //    }
-            //}
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    if (!string.IsNullOrEmpty(MyProject.Devices[0].DeviceItems[1].DeviceItems[i].Name))
-            //    {
-            //        dataGridView1.Rows.Add(i.ToString(), MyProject.Devices[0].DeviceItems[1].DeviceItems[i].Name);
-            //    }
-
-
-            //}
-            //foreach (Device device in MyProject.Devices)
-            //{
-            //    dataGridView1.Rows.Add(device.Name);
-            //    foreach (DeviceItem Dev1 in device.DeviceItems)
-            //    {
-            //        dataGridView1.Rows.Add("-", Dev1.Name);
-            //        foreach (DeviceItem Dev2 in Dev1.DeviceItems)
-            //        {
-            //            dataGridView1.Rows.Add("-", "-", Dev2.Name);
-            //            foreach (DeviceItem Dev3 in Dev2.DeviceItems)
-            //            {
-            //                dataGridView1.Rows.Add("-", "-", "-", Dev3.Name);
-            //            }
-            //        }
-            //    }
-            //}
-            // Проверка входящих параметров HMI или это другой HW, без этого ошибка пра добавлении HMI 
-            //string name1 = "name1";
-            //string deviceName1 = "devname1";
-            ////Device device;
-            //string ordernumber = "OrderNumber:6AV2 124-0MC01-0AX0/15.1.0.0";
-            ////device.TypeIdentifier = "TypeIdentifier;";
-            //if (true)
-            //{
-            //    deviceName1 = "";
-            //    Device device1 = MyProject.Devices.CreateWithItem(ordernumber, name1, deviceName1);
-            //}
-            //else
-            //{
-            //    MessageBox.Show("Not today honey");
-            //}
-            //Device device1 = MyProject.Devices.CreateWithItem("OrderNumber:6AV2 124-0MC01-0AX0/15.1.0.0", "12", deviceName1);
-            //dataGridView1.Rows.Clear();
-            //dataGridView1.Columns.Clear();
-            //dataGridView1.Columns.Add("deviceItem.Name", "deviceItem.Name");
-            //dataGridView1.Columns.Add("device.Name", "device.Name");
-            //foreach (Device device in MyProject.Devices)
-            //{
-            //    DeviceItemComposition deviceItemAggregation = device.DeviceItems;
-            //    foreach (DeviceItem deviceItem in deviceItemAggregation)
-            //    {
-            //        dataGridView1.Rows.Add(deviceItem.Name, device.Name);
-            //    }
-            //}
-            #endregion
-            //int counter_device = 0;
-            //int counter_Dev1 = 0;
-            //int counter_Dev2 = 0;
-            //dataGridView1.Columns.Add("1", "1");
-            //foreach (Device device in MyProject.Devices)
-            //{
-            //    foreach (DeviceItem Dev1 in device.DeviceItems)
-            //    {
-            //        foreach (DeviceItem Dev2 in Dev1.DeviceItems)
-            //        {
-            //            if (Dev2.Name == "PROFINET Interface_1")
-            //            {
-            //                MessageBox.Show("Bingo!");
-            //            }
-            //            // MessageBox.Show(Dev2.Name);
-            //            //if (Dev2.Name == "PROFINET interface_1" || Dev2.Name == "PROFINET interface" || Dev2.Name == "PROFINET interface_1" || Dev2.Name == "SCALANCE interface_1")
-            //            //{
-            //            //    MessageBox.Show("Bingo! "+ device.Name);
-            //            //}
-            //            counter_Dev2++;
-            //        }
-            //        counter_Dev1++;
-            //        counter_Dev2 = 0;
-            //    }
-            //    counter_device++;
-            //    counter_Dev1 = 0;
-            //}
+          
 
 
              
@@ -755,22 +547,19 @@ namespace StartOpenness
         }
         private void button7_Click(object sender, EventArgs e)
         {
-            try
-            {
-                Device createdDeviceName = MyProject.Devices.CreateWithItem("OrderNumber:6ES7 155-6AU00-0CN0/V3.3", "IM_2", "IM_2_station");
-                
-               
-                
-            }
-            catch (Exception ex)
-            {
-
-                richTextBox1.Text += dateTimeNow + ex.Message + System.Environment.NewLine;
-            }
+           
             
 
             
         }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            GetObjectsData(MyFileName);
+        }
+
+        
     }
 
 }

@@ -142,14 +142,14 @@ namespace StartOpenness
             {
                 MyProject = MyTiaPortal.Projects.Open(new FileInfo(ProjectPath));
                 richTextBox1.SelectionColor = Color.Green;
-                TextMessageForRichTextBox1 = "Project " + ProjectPath + " opened";
+                TextMessageForRichTextBox1 = $"Project {ProjectPath} opened";
                 richTextBox1.SelectedText = TextMessageForRichTextBox1;
 
             }
             catch (Exception ex)
             {
                 richTextBox1.SelectionColor = Color.Red;
-                TextMessageForRichTextBox1 = "Error while opening project" + ex.Message;
+                TextMessageForRichTextBox1 = $"Error while opening project\n{ex.Message}";
                 richTextBox1.SelectedText = TextMessageForRichTextBox1;
             }
             btn_CloseProject.Enabled = true;
@@ -177,14 +177,16 @@ namespace StartOpenness
         }
 
         #endregion
-        private void AddHW(string deviceItemName, string deviceName, string typeNumber, string versionNumber)
+        private void AddHW(string numberDeviceItemInExelFile, string deviceItemName, string deviceName, string typeNumber, string versionNumber)
         {
+            string rowNumber = numberDeviceItemInExelFile;
+            string MLFB = $"OrderNumber:{typeNumber}/{versionNumber}";
+            string name = deviceItemName;
+            string devname = deviceName;
+            bool found = false;
             try
             {
-                string MLFB = "OrderNumber:" + typeNumber + "/" + versionNumber;
-                string name = deviceItemName;
-                string devname = deviceName;
-                bool found = false;
+                
                 foreach (Device device in MyProject.Devices)
                 {
                     DeviceItemComposition deviceItemAggregation = device.DeviceItems;
@@ -204,21 +206,21 @@ namespace StartOpenness
                 if (found == true)
                 {
                     richTextBox1.SelectionColor = Color.Blue;
-                    TextMessageForRichTextBox1 = "DeviceItem " + name + " already exists";
+                    TextMessageForRichTextBox1 = $"DeviceItem {name} already exists";
                     richTextBox1.SelectedText = TextMessageForRichTextBox1;
                 }
                 else
                 {
                     Device createdDeviceName = MyProject.Devices.CreateWithItem(MLFB, name, devname);
                     richTextBox1.SelectionColor = Color.Black;
-                    TextMessageForRichTextBox1 = "Added DeviceItem Name: " + name + " with Order Number: " + typeNumber + " and Firmware Version: " + versionNumber;
+                    TextMessageForRichTextBox1 = $"Added DeviceItem: {name} with {MLFB}";
                     richTextBox1.SelectedText = TextMessageForRichTextBox1;
                 }
             }
             catch (Exception ex)
             {
                 richTextBox1.SelectionColor = Color.Red;
-                TextMessageForRichTextBox1 = deviceName +" - DeviceName\n "+deviceItemName + " - DeviceItemName\n" + ex.Message +"=======================================================\n";
+                TextMessageForRichTextBox1 = $"\nRow number-{rowNumber}\nDeviceItemName-{deviceItemName}\n{ex.Message}";
                 richTextBox1.SelectedText = TextMessageForRichTextBox1;
             }
             
@@ -266,7 +268,7 @@ namespace StartOpenness
                     return;
             }
             richTextBox1.SelectionColor = Color.Green;
-            TextMessageForRichTextBox1 = "Connected to project " + _tiaProcess.ProjectPath.ToString();
+            TextMessageForRichTextBox1 = $"Connected to project\n{_tiaProcess.ProjectPath.ToString()}";
             richTextBox1.SelectedText = TextMessageForRichTextBox1;
             btn_Start.Enabled = false;
             btn_Connect.Enabled = true;
@@ -299,28 +301,26 @@ namespace StartOpenness
             if (fileName != string.Empty)
             {
 
-                //MessageBox.Show(fileName);
                 _Application excel = new _Excel.Application();
                 Workbook wb = excel.Workbooks.Open(fileName);
-                // Провубю вставить выбор по номеру в Комбобоксе
+                // Worksheet - это листы excel, выбираются из comboBox1.SelectedItem, который подгружается при загрузке файла
+                // Загрузка листа меняется при изменении comboBox1.SelectedItem
                 Worksheet ws = wb.Worksheets[comboBox1.SelectedItem];
                 Range ur = ws.UsedRange;
-                
-                // необходимо переделать установку наименования Датагрид таким оразом,
-                // что бы названия брались с файла, а не устанавливались в ручную
-
+              
 
                 dataGridView1.Columns.Clear();
+                // С excel все печально, нумерция ячеек начинается не с [0,0], а с [1,1]
+                // Добавление колонок в ДГВ
                 for (int k = 1; k <= ur.Columns.Count; k++)
                 {
-                    dataGridView1.Columns.Add(ur.Cells[1, k].Text, ur.Cells[2, k].Text);
+                    dataGridView1.Columns.Add(ur.Cells[1, k].Text, ur.Cells[1, k].Text);
                 }
-                
                 dataGridView1.Rows.Clear();
-
+                // Создаю массив для записи значений каждой ячейки строки для дальшего добавления в ДГВ
                 string[] excellRows = new string[ur.Columns.Count];
-                // Создаю массив для записи значений каждой ячейки строки для дальшего добавления в ДГВ - datagridwiev
-                for (int r = 3; r <= ur.Rows.Count; r++)
+                // налало начинается с 1, так что 2 строка будет 2
+                for (int r = 2; r <= ur.Rows.Count; r++)
                 {
                     for (int i = 0; i < ur.Columns.Count; i++)
                     {
@@ -367,7 +367,7 @@ namespace StartOpenness
                     continue;
                 }
 
-                AddHW(dataGridView1.Rows[i].Cells[0].Value.ToString(), dataGridView1.Rows[i].Cells[1].Value.ToString(), dataGridView1.Rows[i].Cells[2].Value.ToString(), dataGridView1.Rows[i].Cells[3].Value.ToString());
+                AddHW(dataGridView1.Rows[i].Cells[0].Value.ToString(), dataGridView1.Rows[i].Cells[1].Value.ToString(), dataGridView1.Rows[i].Cells[2].Value.ToString(), dataGridView1.Rows[i].Cells[3].Value.ToString(), dataGridView1.Rows[i].Cells[4].Value.ToString());
             }
         }
         private void button3_Click(object sender, EventArgs e)
@@ -378,7 +378,7 @@ namespace StartOpenness
             
             foreach (var subnet in MyProject.Subnets)
             {
-                if (subnet.Name== dataGridView1.Rows[1].Cells[4].Value.ToString())
+                if (subnet.Name==dataGridView1.Rows[1].Cells[5].Value.ToString())
                 {
                         foundSubnet = true;
                         MySubnet = subnet;
@@ -387,12 +387,12 @@ namespace StartOpenness
             if (foundSubnet)
             {
                 richTextBox1.SelectionColor = Color.Blue;
-                TextMessageForRichTextBox1 = "Subnet with name [" + dataGridView1.Rows[1].Cells[4].Value.ToString() + "] alredy exist";
+                TextMessageForRichTextBox1 = $"Subnet with name [{dataGridView1.Rows[1].Cells[5].Value.ToString()}] alredy exist";
                 richTextBox1.SelectedText = TextMessageForRichTextBox1;
             }
             else
             {
-                MySubnet = MyProject.Subnets.Create("System:Subnet.Ethernet", dataGridView1.Rows[1].Cells[4].Value.ToString());
+                MySubnet = MyProject.Subnets.Create("System:Subnet.Ethernet", dataGridView1.Rows[1].Cells[5].Value.ToString());
             }
             NetworkInterface network = null; ;
             Node node;
@@ -420,7 +420,7 @@ namespace StartOpenness
                             {
                                 node.ConnectToSubnet(MySubnet);
                                 richTextBox1.SelectionColor = Color.Black;
-                                TextMessageForRichTextBox1 = MyProject.Devices[counter_device].Name + " is connected to [" + MySubnet.Name + "]";
+                                TextMessageForRichTextBox1 = $"{MyProject.Devices[counter_device].Name} is connected to [{MySubnet.Name}]";
                                 richTextBox1.SelectedText = TextMessageForRichTextBox1;
                             }
                             // если интерфейс подключения в наличии и уже есть подключение к сети
@@ -430,14 +430,14 @@ namespace StartOpenness
                                 if (MySubnet.Name==sub.Name)
                                 {
                                     richTextBox1.SelectionColor = Color.Blue;
-                                    TextMessageForRichTextBox1 = MyProject.Devices[counter_device].Name + " is already connected to [" + MySubnet.Name + "]";
+                                    TextMessageForRichTextBox1 = $"{MyProject.Devices[counter_device].Name} is already connected to [{MySubnet.Name}]";
                                     richTextBox1.SelectedText = TextMessageForRichTextBox1;
                                 }
                                 else
                                 {
                                     node.ConnectToSubnet(MySubnet);
                                     richTextBox1.SelectionColor = Color.Black;
-                                    TextMessageForRichTextBox1 = MyProject.Devices[counter_device].Name + " is connected to [" + MySubnet.Name + "]";
+                                    TextMessageForRichTextBox1 = $"{MyProject.Devices[counter_device].Name} is connected to [{MySubnet.Name}]";
                                     richTextBox1.SelectedText = TextMessageForRichTextBox1;
                                 }
                                 
@@ -463,13 +463,13 @@ namespace StartOpenness
             {
                 mySubnet = subnet;
                 richTextBox1.SelectionColor = Color.Black;
-                TextMessageForRichTextBox1 = "[" + subnet.Name + "] is founded";
+                TextMessageForRichTextBox1 = $"[{subnet.Name}] is founded";
                 richTextBox1.SelectedText = TextMessageForRichTextBox1;
             }
             foreach (IoSystem ioSystem1 in mySubnet.IoSystems)
             {
                 richTextBox1.SelectionColor = Color.Black;
-                TextMessageForRichTextBox1 = "[" + ioSystem1.Name + "] is founded";
+                TextMessageForRichTextBox1 = $"[{ioSystem1.Name}] is founded";
                 richTextBox1.SelectedText = TextMessageForRichTextBox1;
             }
 
@@ -501,7 +501,7 @@ namespace StartOpenness
                                 if (ioController.IoSystem != null)
                                 {
                                     richTextBox1.SelectionColor = Color.Blue;
-                                    TextMessageForRichTextBox1 = ioController.IoSystem.Name + " IO system is already connected";
+                                    TextMessageForRichTextBox1 = $"{ioController.IoSystem.Name} IO system is already connected";
                                     richTextBox1.SelectedText = TextMessageForRichTextBox1;
                                 }
                                 if ((ioController != null)&&(ioController.IoSystem==null))

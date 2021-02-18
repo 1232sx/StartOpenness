@@ -240,7 +240,7 @@ namespace StartOpenness
             // 
             this.button6.Location = new System.Drawing.Point(412, 599);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(75, 23);
+            this.button6.Size = new System.Drawing.Size(75, 58);
             this.button6.TabIndex = 25;
             this.button6.Text = "button6";
             this.button6.UseVisualStyleBackColor = true;
@@ -269,7 +269,7 @@ namespace StartOpenness
             // 
             this.button9.Location = new System.Drawing.Point(657, 599);
             this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(75, 23);
+            this.button9.Size = new System.Drawing.Size(75, 58);
             this.button9.TabIndex = 28;
             this.button9.Text = "button9";
             this.button9.UseVisualStyleBackColor = true;
@@ -278,7 +278,7 @@ namespace StartOpenness
             // 
             this.button10.Location = new System.Drawing.Point(739, 599);
             this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(75, 23);
+            this.button10.Size = new System.Drawing.Size(75, 58);
             this.button10.TabIndex = 29;
             this.button10.Text = "button10";
             this.button10.UseVisualStyleBackColor = true;

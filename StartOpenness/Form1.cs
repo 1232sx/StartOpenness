@@ -12,6 +12,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Drawing;
 using System.Windows.Forms;
 
 using _Excel = Microsoft.Office.Interop.Excel;
@@ -21,10 +22,17 @@ namespace StartOpenness
     public partial class Form1 : Form
     {
         private static TiaPortalProcess _tiaProcess;
-       
-        public  Subnet MySubnet_test
+        private string textMessageForRichTextBox1;
+        public string TextMessageForRichTextBox1
         {
-            get; set;
+            get
+            {
+                return textMessageForRichTextBox1;
+            }
+            set
+            {
+                textMessageForRichTextBox1 = "[" + DateTime.Now + "] " + value+"\n";
+            }
         }
         public string MyFileName
         {
@@ -34,7 +42,6 @@ namespace StartOpenness
         {
             get; set;
         }
-        public string dateTimeNow => "[" + DateTime.Now + "] ";
         public Project MyProject
         {
             get; set;
@@ -42,10 +49,8 @@ namespace StartOpenness
         public Form1()
         {
             InitializeComponent();
-            //dataGridView1.AllowUserToAddRows = false;
             AppDomain CurrentDomain = AppDomain.CurrentDomain;
             CurrentDomain.AssemblyResolve += new ResolveEventHandler(MyResolver);
-            richTextBox1.Text = null;
         }
         #region Standart buttons no changes  
         private static Assembly MyResolver(object sender, ResolveEventArgs args)
@@ -81,16 +86,22 @@ namespace StartOpenness
        
         private void StartTIA(object sender, EventArgs e)
         {
+            
             if (rdb_WithoutUI.Checked == true)
             {
+               
                 MyTiaPortal = new TiaPortal(TiaPortalMode.WithoutUserInterface);
-                richTextBox1.Text += dateTimeNow + "TIA Portal started without user interface" + System.Environment.NewLine;
+                richTextBox1.SelectionColor = Color.Green;
+                TextMessageForRichTextBox1 = "TIA Portal started without user interface";
+                richTextBox1.SelectedText = TextMessageForRichTextBox1;
                 _tiaProcess = TiaPortal.GetProcesses()[0];
             }
             else
             {
                 MyTiaPortal = new TiaPortal(TiaPortalMode.WithUserInterface);
-                richTextBox1.Text += dateTimeNow +  "TIA Portal started with user interface" + System.Environment.NewLine;
+                richTextBox1.SelectionColor = Color.Green;
+                TextMessageForRichTextBox1 = "TIA Portal started with user interface";
+                richTextBox1.SelectedText = TextMessageForRichTextBox1;
             }
 
             btn_SearchProject.Enabled = true;
@@ -102,14 +113,14 @@ namespace StartOpenness
         private void DisposeTIA(object sender, EventArgs e)
         {
             MyTiaPortal.Dispose();
-            richTextBox1.Text += dateTimeNow + "TIA Portal disposed" + System.Environment.NewLine;
+            richTextBox1.SelectionColor = Color.Green;
+            TextMessageForRichTextBox1 = "TIA Portal disposed";
+            richTextBox1.SelectedText = TextMessageForRichTextBox1;
             btn_Start.Enabled = true;
             btn_Dispose.Enabled = false;
             btn_CloseProject.Enabled = false;
             btn_SearchProject.Enabled = false;
-            //btn_CompileHW.Enabled = false;
             btn_Save.Enabled = false;
-
         }
         
         private void SearchProject(object sender, EventArgs e)
@@ -130,75 +141,89 @@ namespace StartOpenness
             try
             {
                 MyProject = MyTiaPortal.Projects.Open(new FileInfo(ProjectPath));
-                richTextBox1.Text += dateTimeNow + "Project " + ProjectPath + " opened" + System.Environment.NewLine;
+                richTextBox1.SelectionColor = Color.Green;
+                TextMessageForRichTextBox1 = "Project " + ProjectPath + " opened";
+                richTextBox1.SelectedText = TextMessageForRichTextBox1;
 
             }
             catch (Exception ex)
             {
-                richTextBox1.Text += dateTimeNow + "Error while opening project" + ex.Message + System.Environment.NewLine;
+                richTextBox1.SelectionColor = Color.Red;
+                TextMessageForRichTextBox1 = "Error while opening project" + ex.Message;
+                richTextBox1.SelectedText = TextMessageForRichTextBox1;
             }
-            //btn_CompileHW.Enabled = true;
             btn_CloseProject.Enabled = true;
             btn_SearchProject.Enabled = false;
             btn_Save.Enabled = true;
-            //btn_AddHW.Enabled = true;
         }
         
         private void SaveProject(object sender, EventArgs e)
         {
             MyProject.Save();
-            richTextBox1.Text += dateTimeNow + "Project saved" + System.Environment.NewLine;
+            richTextBox1.SelectionColor = Color.Green;
+            TextMessageForRichTextBox1 = "Project saved";
+            richTextBox1.SelectedText = TextMessageForRichTextBox1;
         }
        
         private void CloseProject(object sender, EventArgs e)
         {
             MyProject.Close();
-            richTextBox1.Text += dateTimeNow + "Project closed" + System.Environment.NewLine;
+            richTextBox1.SelectionColor = Color.Green;
+            TextMessageForRichTextBox1 = "Project closed";
+            richTextBox1.SelectedText = TextMessageForRichTextBox1;
             btn_SearchProject.Enabled = true;
             btn_CloseProject.Enabled = false;
             btn_Save.Enabled = false;
-            //btn_CompileHW.Enabled = false;
         }
 
         #endregion
-      
-        
         private void AddHW(string deviceItemName, string deviceName, string typeNumber, string versionNumber)
         {
-            //btn_AddHW.Enabled = false;
-            string MLFB = "OrderNumber:" + typeNumber + "/" + versionNumber;
-
-            string name = deviceItemName;
-            string devname = deviceName;
-            bool found = false;
-            foreach (Device device in MyProject.Devices)
+            try
             {
-                DeviceItemComposition deviceItemAggregation = device.DeviceItems;
-                foreach (DeviceItem deviceItem in deviceItemAggregation)
+                string MLFB = "OrderNumber:" + typeNumber + "/" + versionNumber;
+                string name = deviceItemName;
+                string devname = deviceName;
+                bool found = false;
+                foreach (Device device in MyProject.Devices)
                 {
-                    // Ошибка при проверке имен 'deviceItem.Name == devname || device.Name == devname' 
-                    //  device.Name == devname => device.Name == name это частично правильно
-                    // добавлено еще одно условие проверки именно для HMI и в итоге получилось 
-                    // if (deviceItem.Name == name || device.Name == devname|| device.Name == name)
-                    // данная проверка не пропускает ни PLC ни HMI
-                    if (deviceItem.Name == name || device.Name == devname || device.Name == name)
+                    DeviceItemComposition deviceItemAggregation = device.DeviceItems;
+                    foreach (DeviceItem deviceItem in deviceItemAggregation)
                     {
-                       found = true;
+                        // Ошибка при проверке имен 'deviceItem.Name == devname || device.Name == devname' 
+                        //  device.Name == devname => device.Name == name это частично правильно
+                        // добавлено еще одно условие проверки именно для HMI и в итоге получилось 
+                        // if (deviceItem.Name == name || device.Name == devname|| device.Name == name)
+                        // данная проверка не пропускает ни PLC ни HMI
+                        if (deviceItem.Name == name || device.Name == devname )
+                        {
+                            found = true;
+                        }
                     }
                 }
+                if (found == true)
+                {
+                    richTextBox1.SelectionColor = Color.Blue;
+                    TextMessageForRichTextBox1 = "DeviceItem " + name + " already exists";
+                    richTextBox1.SelectedText = TextMessageForRichTextBox1;
+                }
+                else
+                {
+                    Device createdDeviceName = MyProject.Devices.CreateWithItem(MLFB, name, devname);
+                    richTextBox1.SelectionColor = Color.Black;
+                    TextMessageForRichTextBox1 = "Added DeviceItem Name: " + name + " with Order Number: " + typeNumber + " and Firmware Version: " + versionNumber;
+                    richTextBox1.SelectedText = TextMessageForRichTextBox1;
+                }
             }
-            if (found == true)
+            catch (Exception ex)
             {
-                richTextBox1.Text += dateTimeNow + "Device " + deviceItemName + " already exists" + System.Environment.NewLine;
+                richTextBox1.SelectionColor = Color.Red;
+                TextMessageForRichTextBox1 = deviceName +" - DeviceName\n "+deviceItemName + " - DeviceItemName\n" + ex.Message +"=======================================================\n";
+                richTextBox1.SelectedText = TextMessageForRichTextBox1;
             }
-            else
-            {
-                Device createdDeviceName = MyProject.Devices.CreateWithItem(MLFB, name, devname);
+            
+            
 
-                richTextBox1.Text += dateTimeNow + "Add Device Name: " + name + " with Order Number: " + typeNumber + " and Firmware Version: " + versionNumber + System.Environment.NewLine;
-            }
-
-            //btn_AddHW.Enabled = true;
         }
         private void btn_ConnectTIA(object sender, EventArgs e)
         {
@@ -219,30 +244,36 @@ namespace StartOpenness
                     }
                     if (MyTiaPortal.Projects.Count <= 0)
                     {
-                        richTextBox1.Text += dateTimeNow + "No TIA Portal Project was found!" + System.Environment.NewLine;
+                        richTextBox1.SelectionColor = Color.Red;
+                        TextMessageForRichTextBox1 = "No TIA Portal Project was found!";
+                        richTextBox1.SelectedText = TextMessageForRichTextBox1;
                         btn_Connect.Enabled = true;
                         return;
                     }
                     MyProject = MyTiaPortal.Projects[0];
                     break;
                 case 0:
-                    richTextBox1.Text += dateTimeNow + "No running instance of TIA Portal was found!" + System.Environment.NewLine;
+                    richTextBox1.SelectionColor = Color.Red;
+                    TextMessageForRichTextBox1 = "No running instance of TIA Portal was found!";
+                    richTextBox1.SelectedText = TextMessageForRichTextBox1;
                     btn_Connect.Enabled = true;
                     return;
                 default:
-                    richTextBox1.Text += dateTimeNow + "More than one running instance of TIA Portal was found!" + System.Environment.NewLine;
+                    richTextBox1.SelectionColor = Color.Red;
+                    TextMessageForRichTextBox1 = "More than one running instance of TIA Portal was found!";
+                    richTextBox1.SelectedText = TextMessageForRichTextBox1;
                     btn_Connect.Enabled = true;
                     return;
             }
-            richTextBox1.Text += dateTimeNow + "Connected to project " +_tiaProcess.ProjectPath.ToString() + System.Environment.NewLine;
+            richTextBox1.SelectionColor = Color.Green;
+            TextMessageForRichTextBox1 = "Connected to project " + _tiaProcess.ProjectPath.ToString();
+            richTextBox1.SelectedText = TextMessageForRichTextBox1;
             btn_Start.Enabled = false;
             btn_Connect.Enabled = true;
             btn_Dispose.Enabled = true;
-            //btn_CompileHW.Enabled = true;
             btn_CloseProject.Enabled = true;
             btn_SearchProject.Enabled = false;
             btn_Save.Enabled = true;
-            //btn_AddHW.Enabled = true;
         }
         private void ItinializeCombobox1(string fileName)
         {
@@ -355,7 +386,9 @@ namespace StartOpenness
             }
             if (foundSubnet)
             {
-                richTextBox1.Text += dateTimeNow + "Subnet with name [" + dataGridView1.Rows[1].Cells[4].Value.ToString() + "] alredy exist" + System.Environment.NewLine;
+                richTextBox1.SelectionColor = Color.Blue;
+                TextMessageForRichTextBox1 = "Subnet with name [" + dataGridView1.Rows[1].Cells[4].Value.ToString() + "] alredy exist";
+                richTextBox1.SelectedText = TextMessageForRichTextBox1;
             }
             else
             {
@@ -386,7 +419,9 @@ namespace StartOpenness
                             if (node != null&&sub==null)
                             {
                                 node.ConnectToSubnet(MySubnet);
-                                richTextBox1.Text += dateTimeNow + MyProject.Devices[counter_device].Name + " is connected to [" + MySubnet.Name + "]" + System.Environment.NewLine;
+                                richTextBox1.SelectionColor = Color.Black;
+                                TextMessageForRichTextBox1 = MyProject.Devices[counter_device].Name + " is connected to [" + MySubnet.Name + "]";
+                                richTextBox1.SelectedText = TextMessageForRichTextBox1;
                             }
                             // если интерфейс подключения в наличии и уже есть подключение к сети
                             if (node!=null&&sub!=null)
@@ -394,13 +429,18 @@ namespace StartOpenness
                                 // Проверка соответствия имен заданной сети и сети к которой подключен нод
                                 if (MySubnet.Name==sub.Name)
                                 {
-                                    richTextBox1.Text += dateTimeNow + MyProject.Devices[counter_device].Name + " is already connected to [" + MySubnet.Name + "]" + System.Environment.NewLine;
+                                    richTextBox1.SelectionColor = Color.Blue;
+                                    TextMessageForRichTextBox1 = MyProject.Devices[counter_device].Name + " is already connected to [" + MySubnet.Name + "]";
+                                    richTextBox1.SelectedText = TextMessageForRichTextBox1;
                                 }
                                 else
                                 {
                                     node.ConnectToSubnet(MySubnet);
-                                    richTextBox1.Text += dateTimeNow + MyProject.Devices[counter_device].Name + " is connected to [" + MySubnet.Name + "]" + System.Environment.NewLine;
+                                    richTextBox1.SelectionColor = Color.Black;
+                                    TextMessageForRichTextBox1 = MyProject.Devices[counter_device].Name + " is connected to [" + MySubnet.Name + "]";
+                                    richTextBox1.SelectedText = TextMessageForRichTextBox1;
                                 }
+                                
                             }
                            node = null;
                             
@@ -422,11 +462,15 @@ namespace StartOpenness
             foreach (var subnet in MyProject.Subnets)
             {
                 mySubnet = subnet;
-                richTextBox1.Text += dateTimeNow + "[" + subnet.Name + "] is founded" + System.Environment.NewLine;
+                richTextBox1.SelectionColor = Color.Black;
+                TextMessageForRichTextBox1 = "[" + subnet.Name + "] is founded";
+                richTextBox1.SelectedText = TextMessageForRichTextBox1;
             }
             foreach (IoSystem ioSystem1 in mySubnet.IoSystems)
             {
-                richTextBox1.Text += dateTimeNow + "[" + ioSystem1.Name + "] is founded" + System.Environment.NewLine;
+                richTextBox1.SelectionColor = Color.Black;
+                TextMessageForRichTextBox1 = "[" + ioSystem1.Name + "] is founded";
+                richTextBox1.SelectedText = TextMessageForRichTextBox1;
             }
 
             
@@ -449,12 +493,16 @@ namespace StartOpenness
                             networkInterface = MyProject.Devices[counter_device].DeviceItems[counter_Dev1].DeviceItems[counter_Dev2].GetService<NetworkInterface>();
                             if ((networkInterface.InterfaceOperatingMode & InterfaceOperatingModes.IoController) != 0)
                             {
-                                richTextBox1.Text += dateTimeNow + " Bingo IO Controller" + Environment.NewLine;
+                                richTextBox1.SelectionColor = Color.Black;
+                                TextMessageForRichTextBox1 = "Bingo IO Controller";
+                                richTextBox1.SelectedText = TextMessageForRichTextBox1;
                                 IoControllerComposition ioControllers = networkInterface.IoControllers;
                                 IoController ioController = ioControllers.First();
                                 if (ioController.IoSystem != null)
                                 {
-                                    richTextBox1.Text += dateTimeNow + ioController.IoSystem.Name  + " IO system is already connected" + Environment.NewLine;
+                                    richTextBox1.SelectionColor = Color.Blue;
+                                    TextMessageForRichTextBox1 = ioController.IoSystem.Name + " IO system is already connected";
+                                    richTextBox1.SelectedText = TextMessageForRichTextBox1;
                                 }
                                 if ((ioController != null)&&(ioController.IoSystem==null))
                                 {
@@ -465,7 +513,9 @@ namespace StartOpenness
                             }
                             if ((networkInterface.InterfaceOperatingMode & InterfaceOperatingModes.IoDevice) != 0)
                             {
-                                richTextBox1.Text += dateTimeNow + " Bingo IO Device" + Environment.NewLine;
+                                richTextBox1.SelectionColor = Color.Black;
+                                TextMessageForRichTextBox1 = "Bingo IO Device";
+                                richTextBox1.SelectedText = TextMessageForRichTextBox1;
                                 IoConnectorComposition ioConnectors = networkInterface.IoConnectors;
                                 IoConnector ioConnector = ioConnectors.First();
 
@@ -537,11 +587,15 @@ namespace StartOpenness
             if (hwObject.CanPlugNew("OrderNumber:6ES7 521-1BH10-0AA0/V1.0", "DI 16x24VDC BA_1", 3))
             {
                 DeviceItem newPluggedDeviceItem = hwObject.PlugNew("OrderNumber:6ES7 521-1BH10-0AA0/V1.0", "DI 16x24VDC BA_1", 3);
-                richTextBox1.Text+= dateTimeNow + "Bingo!" + System.Environment.NewLine;
+                richTextBox1.SelectionColor = Color.Black;
+                TextMessageForRichTextBox1 = "Bingo!";
+                richTextBox1.SelectedText = TextMessageForRichTextBox1;
             }
             else
             {
-                richTextBox1.Text += dateTimeNow + PLC_1.DeviceItems[0].Name + System.Environment.NewLine;
+                richTextBox1.SelectionColor = Color.Black;
+                TextMessageForRichTextBox1 = PLC_1.DeviceItems[0].Name;
+                richTextBox1.SelectedText = TextMessageForRichTextBox1;
             }
 
         }

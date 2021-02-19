@@ -452,7 +452,38 @@ namespace StartOpenness
                                 }
 
                             }
+                            //прописываем адреса сразу
+                            //переменная для отслеживания позиции в таблице, где выбросило исключение
+                            string positionDGV = null;
+                            try
+                            {
+                                for (int i = 0; i < dataGridView1.Rows.Count; i++)
+                                {
+                                    if (dataGridView1.Rows[i].Cells[0].Value == null)
+                                    {
+                                        continue;
+                                    }
 
+                                    positionDGV = dataGridView1.Rows[i].Cells[0].Value.ToString();
+                                    // Заморочка с внутренними именами HMI, по этому надо проверяти Dev1.Name и device.Name, последнее для HMI
+                                    if (dataGridView1.Rows[i].Cells[1].Value.ToString() == Dev1.Name || dataGridView1.Rows[i].Cells[1].Value.ToString() == device.Name)
+                                    {
+
+                                        node.SetAttribute("Address", dataGridView1.Rows[i].Cells[7].Value);
+                                        var x = node.GetAttribute("Address");
+                                        richTextBox1.SelectionColor = Color.Purple;
+                                        TextMessageForRichTextBox1 = $"{Dev1.Name}==={x}";
+                                        richTextBox1.SelectedText = TextMessageForRichTextBox1;
+                                    }
+
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                richTextBox1.SelectionColor = Color.Red;
+                                TextMessageForRichTextBox1 = $"\nPosition-{positionDGV} in DataGridView\n{ex.Message}";
+                                richTextBox1.SelectedText = TextMessageForRichTextBox1;
+                            }
                         }
                     }
                 }

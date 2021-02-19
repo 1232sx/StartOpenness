@@ -372,16 +372,26 @@ namespace StartOpenness
         }
         private void button3_Click(object sender, EventArgs e)
         {
+            Subnet mySubnet = CreateNewSubnet();
+
+
+
+            
+            
+        }
+
+        private Subnet CreateNewSubnet()
+        {
             Subnet MySubnet = null;
             bool foundSubnet = false;
 
-            
+
             foreach (var subnet in MyProject.Subnets)
             {
-                if (subnet.Name==dataGridView1.Rows[1].Cells[5].Value.ToString())
+                if (subnet.Name == dataGridView1.Rows[1].Cells[5].Value.ToString())
                 {
-                        foundSubnet = true;
-                        MySubnet = subnet;
+                    foundSubnet = true;
+                    MySubnet = subnet;
                 }
             }
             if (foundSubnet)
@@ -394,14 +404,18 @@ namespace StartOpenness
             {
                 MySubnet = MyProject.Subnets.Create("System:Subnet.Ethernet", dataGridView1.Rows[1].Cells[5].Value.ToString());
             }
+            return MySubnet;
+        }
+        private void ConnectToNewSubnet(Subnet subnet)
+        {
             NetworkInterface network = null; ;
             Node node;
-            
-            
+
+
             int counter_device = 0;
             int counter_Dev1 = 0;
             int counter_Dev2 = 0;
-            
+
 
             foreach (Device device in MyProject.Devices)
             {
@@ -416,7 +430,7 @@ namespace StartOpenness
                             // внизу мы берем подсеть к которой подключени нод, надо для проверки
                             Subnet sub = node.ConnectedSubnet;
                             // если интерфейс подключеня в наличии и еще не подключен к сети
-                            if (node != null&&sub==null)
+                            if (node != null && sub == null)
                             {
                                 node.ConnectToSubnet(MySubnet);
                                 richTextBox1.SelectionColor = Color.Black;
@@ -424,10 +438,10 @@ namespace StartOpenness
                                 richTextBox1.SelectedText = TextMessageForRichTextBox1;
                             }
                             // если интерфейс подключения в наличии и уже есть подключение к сети
-                            if (node!=null&&sub!=null)
+                            if (node != null && sub != null)
                             {
                                 // Проверка соответствия имен заданной сети и сети к которой подключен нод
-                                if (MySubnet.Name==sub.Name)
+                                if (MySubnet.Name == sub.Name)
                                 {
                                     richTextBox1.SelectionColor = Color.Blue;
                                     TextMessageForRichTextBox1 = $"{MyProject.Devices[counter_device].Name} is already connected to [{MySubnet.Name}]";
@@ -440,10 +454,10 @@ namespace StartOpenness
                                     TextMessageForRichTextBox1 = $"{MyProject.Devices[counter_device].Name} is connected to [{MySubnet.Name}]";
                                     richTextBox1.SelectedText = TextMessageForRichTextBox1;
                                 }
-                                
+
                             }
-                           node = null;
-                            
+                            node = null;
+
                         }
                         counter_Dev2++;
 
@@ -454,8 +468,9 @@ namespace StartOpenness
                 counter_device++;
                 counter_Dev1 = 0;
             }
-            
         }
+
+
         private void button4_Click(object sender, EventArgs e)
         {
             Subnet mySubnet = null;

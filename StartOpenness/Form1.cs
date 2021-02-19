@@ -373,7 +373,7 @@ namespace StartOpenness
         private void button3_Click(object sender, EventArgs e)
         {
             Subnet mySubnet = CreateNewSubnet();
-
+            ConnectToNewSubnet(mySubnet);
 
 
             
@@ -406,70 +406,59 @@ namespace StartOpenness
             }
             return MySubnet;
         }
-        private void ConnectToNewSubnet(Subnet subnet)
+        private void ConnectToNewSubnet(Subnet existingSubnet)
         {
-            NetworkInterface network = null; ;
+            NetworkInterface network;
             Node node;
-
-
-            int counter_device = 0;
-            int counter_Dev1 = 0;
-            int counter_Dev2 = 0;
-
-
             foreach (Device device in MyProject.Devices)
             {
                 foreach (DeviceItem Dev1 in device.DeviceItems)
                 {
                     foreach (DeviceItem Dev2 in Dev1.DeviceItems)
                     {
+                        // хардкодим название девайса для подключения, потому что при использовании 
+                        //node = network.Nodes.First() - он перебирает все интерфейсы для подключения, которые нам не нужны
                         if (Dev2.Name == "PROFINET interface_1" || Dev2.Name == "PROFINET interface" || Dev2.Name == "PROFINET Interface_1" || Dev2.Name == "SCALANCE interface_1")
                         {
-                            network = MyProject.Devices[counter_device].DeviceItems[counter_Dev1].DeviceItems[counter_Dev2].GetService<NetworkInterface>();
-                            node = network.Nodes[0];
+                            //очень полезная штука для быстрого поиска интерфейса в девайситеме
+                            network = ((IEngineeringServiceProvider)Dev2).GetService<NetworkInterface>(); 
+                            node = network.Nodes.First();
                             // внизу мы берем подсеть к которой подключени нод, надо для проверки
                             Subnet sub = node.ConnectedSubnet;
-                            // если интерфейс подключеня в наличии и еще не подключен к сети
-                            if (node != null && sub == null)
+                            //если нод не подключен к сети
+                            if (sub == null)
                             {
-                                node.ConnectToSubnet(MySubnet);
+                                node.ConnectToSubnet(existingSubnet);
                                 richTextBox1.SelectionColor = Color.Black;
-                                TextMessageForRichTextBox1 = $"{MyProject.Devices[counter_device].Name} is connected to [{MySubnet.Name}]";
+                                TextMessageForRichTextBox1 = $"{Dev1.Name} is connected to [{existingSubnet.Name}]";
                                 richTextBox1.SelectedText = TextMessageForRichTextBox1;
                             }
-                            // если интерфейс подключения в наличии и уже есть подключение к сети
-                            if (node != null && sub != null)
+                            // если нод уже подключенк сети
+                            if (sub != null)
                             {
-                                // Проверка соответствия имен заданной сети и сети к которой подключен нод
-                                if (MySubnet.Name == sub.Name)
+                                // если нод подключен к сети которую мы создаем
+                                if (existingSubnet.Name == sub.Name)
                                 {
                                     richTextBox1.SelectionColor = Color.Blue;
-                                    TextMessageForRichTextBox1 = $"{MyProject.Devices[counter_device].Name} is already connected to [{MySubnet.Name}]";
+                                    TextMessageForRichTextBox1 = $"{Dev1.Name} is already connected to [{existingSubnet.Name}]";
                                     richTextBox1.SelectedText = TextMessageForRichTextBox1;
                                 }
+                                // если нод подключен к сети которая уже была создана до нас
                                 else
                                 {
-                                    node.ConnectToSubnet(MySubnet);
-                                    richTextBox1.SelectionColor = Color.Black;
-                                    TextMessageForRichTextBox1 = $"{MyProject.Devices[counter_device].Name} is connected to [{MySubnet.Name}]";
+                                    richTextBox1.SelectionColor = Color.Purple;
+                                    TextMessageForRichTextBox1 = $"{Dev1.Name} is connected to other [{sub.Name}]";
                                     richTextBox1.SelectedText = TextMessageForRichTextBox1;
                                 }
 
                             }
-                            node = null;
 
                         }
-                        counter_Dev2++;
-
                     }
-                    counter_Dev1++;
-                    counter_Dev2 = 0;
                 }
-                counter_device++;
-                counter_Dev1 = 0;
             }
         }
-
+        
 
         private void button4_Click(object sender, EventArgs e)
         {

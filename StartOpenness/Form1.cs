@@ -177,11 +177,11 @@ namespace StartOpenness
         }
 
         #endregion
-        private void AddHW(string numberDeviceItemInExelFile, string deviceItemName, string deviceName, string typeNumber, string versionNumber)
+        private void AddHW(string numberDeviceItemInExelFile, string cabinetName, string deviceItemName, string deviceName, string typeNumber, string versionNumber)
         {
             string rowNumber = numberDeviceItemInExelFile;
             string MLFB = $"OrderNumber:{typeNumber}/{versionNumber}";
-            string name = deviceItemName;
+            string name = cabinetName+deviceItemName;
             string devname = deviceName;
             bool found = false;
             try
@@ -374,7 +374,7 @@ namespace StartOpenness
         {
             Subnet mySubnet = CreateNewSubnet();
             ConnectToNewSubnet(mySubnet);
-
+            //EstablishIpAdress(mySubnet);
 
             
             
@@ -454,6 +454,8 @@ namespace StartOpenness
                             }
                             //прописываем адреса сразу
                             //переменная для отслеживания позиции в таблице, где выбросило исключение
+                            //по идее надо тут делать функцию по добавлению IP адресса, но 
+                            //в этом нет смысла так как она будет намного сложнее, проще ее здесь засунуть
                             string positionDGV = null;
                             try
                             {
@@ -489,9 +491,7 @@ namespace StartOpenness
                 }
             }
         }
-        
-
-        private void button4_Click(object sender, EventArgs e)
+        private void CreateAndConnectIOSystem()
         {
             Subnet mySubnet = null;
             foreach (var subnet in MyProject.Subnets)
@@ -508,8 +508,8 @@ namespace StartOpenness
                 richTextBox1.SelectedText = TextMessageForRichTextBox1;
             }
 
-            
-          
+
+
 
 
             int counter_device = 0;
@@ -525,7 +525,8 @@ namespace StartOpenness
                     {
                         if (Dev2.Name == "PROFINET interface_1" || Dev2.Name == "PROFINET interface" || Dev2.Name == "PROFINET Interface_1" || Dev2.Name == "SCALANCE interface_1")
                         {
-                            networkInterface = MyProject.Devices[counter_device].DeviceItems[counter_Dev1].DeviceItems[counter_Dev2].GetService<NetworkInterface>();
+                            networkInterface = ((IEngineeringServiceProvider)Dev2).GetService<NetworkInterface>();
+
                             if ((networkInterface.InterfaceOperatingMode & InterfaceOperatingModes.IoController) != 0)
                             {
                                 richTextBox1.SelectionColor = Color.Black;
@@ -539,12 +540,12 @@ namespace StartOpenness
                                     TextMessageForRichTextBox1 = $"{ioController.IoSystem.Name} IO system is already connected";
                                     richTextBox1.SelectedText = TextMessageForRichTextBox1;
                                 }
-                                if ((ioController != null)&&(ioController.IoSystem==null))
+                                if ((ioController != null) && (ioController.IoSystem == null))
                                 {
                                     ioSystem = ioController.CreateIoSystem("");
                                 }
-                               
-                                
+
+
                             }
                             if ((networkInterface.InterfaceOperatingMode & InterfaceOperatingModes.IoDevice) != 0)
                             {
@@ -559,32 +560,22 @@ namespace StartOpenness
                                     ioConnector.ConnectToIoSystem(ioSystem);
                                 }
                             }
-
-
-
                         }
-                        counter_Dev2++;
-
                     }
-                    counter_Dev1++;
-                    counter_Dev2 = 0;
                 }
-                counter_device++;
-                counter_Dev1 = 0;
             }
+        }
+        
 
+        private void button4_Click(object sender, EventArgs e)
+        {
+
+            CreateAndConnectIOSystem();
 
 
 
         }
         private void button11_Click(object sender, EventArgs e)
-        {
-          
-
-
-             
-        }
-        private void button5_Click(object sender, EventArgs e)
         {
             dataGridView1.Rows.Clear();
             dataGridView1.Columns.Clear();
@@ -611,6 +602,13 @@ namespace StartOpenness
                     }
                 }
             }
+
+
+
+        }
+        private void button5_Click(object sender, EventArgs e)
+        {
+            
         }
         private void button8_Click(object sender, EventArgs e)
         {
@@ -636,10 +634,7 @@ namespace StartOpenness
         }
         private void button7_Click(object sender, EventArgs e)
         {
-           
-            
 
-            
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -648,7 +643,22 @@ namespace StartOpenness
             GetObjectsData(MyFileName);
         }
 
-        
+        int i = 5;
+        private void button10_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Device createdDeviceName = MyProject.Devices.CreateWithItem("OrderNumber:6ES7 517-3FP00-0AB0/Vx.x", $"PLC_{i}", $"PLC_{i}_station");
+            }
+            catch (Exception ex)
+            {
+
+                richTextBox1.SelectionColor = Color.Black;
+                TextMessageForRichTextBox1 = ex.Message;
+                richTextBox1.SelectedText = TextMessageForRichTextBox1;
+            }
+            i++;
+        }
     }
 
 }

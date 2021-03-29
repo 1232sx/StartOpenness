@@ -21,6 +21,25 @@ namespace StartOpenness
 {
     public partial class Form1 : Form
     {
+        //для екселя надо fileName и tableCollection
+        private string FileNameFromExcel
+        {
+            get; set;
+        }
+        private DataTableCollection TableCollectionFromExcel
+        {
+            get;set;
+        }
+        //для работы проверки с шаблоном делаем тейбл колекшн для шаблона
+        private DataTableCollection TableCollectionFromHWsheme
+        {
+            get; set;
+        }
+        //для дальшей работы с таблицей которая находится в дгв надо Table
+        private DataTable TableFromExcel
+        {
+            get;set;
+        }
         private static TiaPortalProcess _tiaProcess;
         private string textMessageForRichTextBox1;
         public string TextMessageForRichTextBox1
@@ -51,7 +70,32 @@ namespace StartOpenness
             InitializeComponent();
             AppDomain CurrentDomain = AppDomain.CurrentDomain;
             CurrentDomain.AssemblyResolve += new ResolveEventHandler(MyResolver);
+            GetDataFromHWsheme();
         }
+        private void GetDataFromHWsheme()
+        {
+            //обязательно надо установить копироание ресурса в свойствах, тогда этот файл можно изменять уже после компиляции
+
+            string path = @"Resources\HW Schema.xls";
+            FileStream stream = File.Open(path, FileMode.Open, FileAccess.Read);
+            IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream);
+            DataSet db = reader.AsDataSet(new ExcelDataSetConfiguration()
+            {
+                ConfigureDataTable = (x) => new ExcelDataTableConfiguration()
+                {
+                    UseHeaderRow = true
+                }
+            });
+
+            TableCollectionFromHWsheme = db.Tables;
+
+            if (TableCollectionFromHWsheme != null) MessageBox.Show("Bingo");
+
+            reader.Close();
+            stream.Close();
+
+        }
+
         #region Standart buttons no changes  
         private static Assembly MyResolver(object sender, ResolveEventArgs args)
         {
@@ -370,6 +414,56 @@ namespace StartOpenness
                 AddHW(dataGridView1.Rows[i].Cells[0].Value.ToString(), dataGridView1.Rows[i].Cells[1].Value.ToString(), dataGridView1.Rows[i].Cells[2].Value.ToString(), dataGridView1.Rows[i].Cells[3].Value.ToString(), dataGridView1.Rows[i].Cells[4].Value.ToString());
             }
         }
+        //private void AddHW(DataTable dataTableFromExcel, DataTable HWconfigSheme)
+        //{
+        //    string rowNumber = numberDeviceItemInExelFile;
+        //    string MLFB = $"OrderNumber:{typeNumber}/{versionNumber}";
+        //    string name = cabinetName + deviceItemName;
+        //    string devname = deviceName;
+        //    bool found = false;
+        //    try
+        //    {
+
+        //        foreach (Device device in MyProject.Devices)
+        //        {
+        //            DeviceItemComposition deviceItemAggregation = device.DeviceItems;
+        //            foreach (DeviceItem deviceItem in deviceItemAggregation)
+        //            {
+        //                // Ошибка при проверке имен 'deviceItem.Name == devname || device.Name == devname' 
+        //                //  device.Name == devname => device.Name == name это частично правильно
+        //                // добавлено еще одно условие проверки именно для HMI и в итоге получилось 
+        //                // if (deviceItem.Name == name || device.Name == devname|| device.Name == name)
+        //                // данная проверка не пропускает ни PLC ни HMI
+        //                if (deviceItem.Name == name || device.Name == devname)
+        //                {
+        //                    found = true;
+        //                }
+        //            }
+        //        }
+        //        if (found == true)
+        //        {
+        //            richTextBox1.SelectionColor = Color.Blue;
+        //            TextMessageForRichTextBox1 = $"DeviceItem {name} already exists";
+        //            richTextBox1.SelectedText = TextMessageForRichTextBox1;
+        //        }
+        //        else
+        //        {
+        //            Device createdDeviceName = MyProject.Devices.CreateWithItem(MLFB, name, devname);
+        //            richTextBox1.SelectionColor = Color.Black;
+        //            TextMessageForRichTextBox1 = $"Added DeviceItem: {name} with {MLFB}";
+        //            richTextBox1.SelectedText = TextMessageForRichTextBox1;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        richTextBox1.SelectionColor = Color.Red;
+        //        TextMessageForRichTextBox1 = $"\nRow number-{rowNumber}\nDeviceItemName-{deviceItemName}\n{ex.Message}";
+        //        richTextBox1.SelectedText = TextMessageForRichTextBox1;
+        //    }
+
+
+
+        //}
         private void button3_Click(object sender, EventArgs e)
         {
             Subnet mySubnet = CreateNewSubnet();
@@ -406,7 +500,7 @@ namespace StartOpenness
             }
             return MySubnet;
         }
-        private void ConnectToNewSubnet(Subnet existingSubnet)
+        private void ConnectToNewSubnetAndEstablishIPadress(Subnet existingSubnet)
         {
             NetworkInterface network;
             Node node;
@@ -454,6 +548,8 @@ namespace StartOpenness
                             }
                             //прописываем адреса сразу
                             //переменная для отслеживания позиции в таблице, где выбросило исключение
+                            //по идее надо тут делать функцию по добавлению IP адресса, но 
+                            //в этом нет смысла так как она будет намного сложнее, проще ее здесь засунуть
                             string positionDGV = null;
                             try
                             {
@@ -489,9 +585,7 @@ namespace StartOpenness
                 }
             }
         }
-        
-
-        private void button4_Click(object sender, EventArgs e)
+        private void CreateAndConnectIOSystem()
         {
             Subnet mySubnet = null;
             foreach (var subnet in MyProject.Subnets)
@@ -508,8 +602,8 @@ namespace StartOpenness
                 richTextBox1.SelectedText = TextMessageForRichTextBox1;
             }
 
-            
-          
+
+
 
 
             int counter_device = 0;
@@ -559,32 +653,22 @@ namespace StartOpenness
                                     ioConnector.ConnectToIoSystem(ioSystem);
                                 }
                             }
-
-
-
                         }
-                        counter_Dev2++;
-
                     }
-                    counter_Dev1++;
-                    counter_Dev2 = 0;
                 }
-                counter_device++;
-                counter_Dev1 = 0;
             }
+        }
+        
 
+        private void button4_Click(object sender, EventArgs e)
+        {
+
+            CreateAndConnectIOSystem();
 
 
 
         }
         private void button11_Click(object sender, EventArgs e)
-        {
-          
-
-
-             
-        }
-        private void button5_Click(object sender, EventArgs e)
         {
             dataGridView1.Rows.Clear();
             dataGridView1.Columns.Clear();
@@ -611,6 +695,13 @@ namespace StartOpenness
                     }
                 }
             }
+
+
+
+        }
+        private void button5_Click(object sender, EventArgs e)
+        {
+            
         }
         private void button8_Click(object sender, EventArgs e)
         {
@@ -636,10 +727,27 @@ namespace StartOpenness
         }
         private void button7_Click(object sender, EventArgs e)
         {
-           
-            
+            var path = @"..\Resourses\HW Schema.xls";
+            MessageBox.Show(path);
+        }
 
-            
+       
+
+        int i = 5;
+        private void button10_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Device createdDeviceName = MyProject.Devices.CreateWithItem("OrderNumber:6ES7 517-3FP00-0AB0/Vx.x", $"PLC_{i}", $"PLC_{i}_station");
+            }
+            catch (Exception ex)
+            {
+
+                richTextBox1.SelectionColor = Color.Black;
+                TextMessageForRichTextBox1 = ex.Message;
+                richTextBox1.SelectedText = TextMessageForRichTextBox1;
+            }
+            i++;
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)

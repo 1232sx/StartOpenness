@@ -14,7 +14,6 @@ using System.Linq;
 using System.Reflection;
 using System.Drawing;
 using System.Windows.Forms;
-using ExcelDataReader;
 using StartOpenness.Properties;
 
 
@@ -67,31 +66,31 @@ namespace StartOpenness
             InitializeComponent();
             AppDomain CurrentDomain = AppDomain.CurrentDomain;
             CurrentDomain.AssemblyResolve += new ResolveEventHandler(MyResolver);
-            GetDataFromHWsheme();
+            //GetDataFromHWsheme();
         }
-        private void GetDataFromHWsheme()
-        {
-            //обязательно надо установить копироание ресурса в свойствах, тогда этот файл можно изменять уже после компиляции
+        //private void GetDataFromHWsheme()
+        //{
+        //    //обязательно надо установить копироание ресурса в свойствах, тогда этот файл можно изменять уже после компиляции
 
-            string path = @"Resources\HW Schema.xls";
-            FileStream stream = File.Open(path, FileMode.Open, FileAccess.Read);
-            IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream);
-            DataSet db = reader.AsDataSet(new ExcelDataSetConfiguration()
-            {
-                ConfigureDataTable = (x) => new ExcelDataTableConfiguration()
-                {
-                    UseHeaderRow = true
-                }
-            });
+        //    string path = @"Resources\HW Schema.xls";
+        //    FileStream stream = File.Open(path, FileMode.Open, FileAccess.Read);
+        //    //IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream);
+        //    DataSet db = reader.AsDataSet(new ExcelDataSetConfiguration()
+        //    {
+        //        ConfigureDataTable = (x) => new ExcelDataTableConfiguration()
+        //        {
+        //            UseHeaderRow = true
+        //        }
+        //    });
 
-            TableCollectionFromHWsheme = db.Tables;
+        //    TableCollectionFromHWsheme = db.Tables;
 
-            if (TableCollectionFromHWsheme != null) MessageBox.Show("Bingo");
+        //    if (TableCollectionFromHWsheme != null) MessageBox.Show("Bingo");
 
-            reader.Close();
-            stream.Close();
+        //    reader.Close();
+        //    stream.Close();
 
-        }
+        //}
 
         #region Standart buttons no changes  
         private static Assembly MyResolver(object sender, ResolveEventArgs args)
@@ -269,46 +268,46 @@ namespace StartOpenness
             btn_SearchProject.Enabled = false;
             btn_Save.Enabled = true;
         }
-        private void btn_OpnExel_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                DialogResult res = openFileDialog1.ShowDialog();
-                if (res == DialogResult.OK)
-                {
-                    FileNameFromExcel = openFileDialog1.FileName;
-                    OpenExcelFileAndInitializeCombobox(FileNameFromExcel);
-                }
-            }
-            catch (Exception ex)
-            {
-                TextMessageForRichTextBox1 = $"{ex.Message}";
-            }
-        }
-        private void OpenExcelFileAndInitializeCombobox(string path)
-        {
-            FileStream stream = File.Open(path, FileMode.Open, FileAccess.Read);
-            IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream);
-            DataSet db = reader.AsDataSet(new ExcelDataSetConfiguration()
-            {
-                ConfigureDataTable = (x) => new ExcelDataTableConfiguration()
-                {
-                    UseHeaderRow = true
-                }
-            });
+        //private void btn_OpnExel_Click(object sender, EventArgs e)
+        //{
+        //    try
+        //    {
+        //        DialogResult res = openFileDialog1.ShowDialog();
+        //        if (res == DialogResult.OK)
+        //        {
+        //            FileNameFromExcel = openFileDialog1.FileName;
+        //            OpenExcelFileAndInitializeCombobox(FileNameFromExcel);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TextMessageForRichTextBox1 = $"{ex.Message}";
+        //    }
+        //}
+        //private void OpenExcelFileAndInitializeCombobox(string path)
+        //{
+        //    FileStream stream = File.Open(path, FileMode.Open, FileAccess.Read);
+        //    IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream);
+        //    DataSet db = reader.AsDataSet(new ExcelDataSetConfiguration()
+        //    {
+        //        ConfigureDataTable = (x) => new ExcelDataTableConfiguration()
+        //        {
+        //            UseHeaderRow = true
+        //        }
+        //    });
            
-                TableCollectionFromExcel = db.Tables;
-                comboBox1.Items.Clear();
-                foreach (DataTable table in TableCollectionFromExcel)
-                {
-                    comboBox1.Items.Add(table.TableName);
-                }
-                comboBox1.SelectedIndex = 0;
+        //        TableCollectionFromExcel = db.Tables;
+        //        comboBox1.Items.Clear();
+        //        foreach (DataTable table in TableCollectionFromExcel)
+        //        {
+        //            comboBox1.Items.Add(table.TableName);
+        //        }
+        //        comboBox1.SelectedIndex = 0;
             
             
-            reader.Close();
-            stream.Close();
-        }
+        //    reader.Close();
+        //    stream.Close();
+        //}
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
            TableFromExcel = TableCollectionFromExcel[Convert.ToString(comboBox1.SelectedItem)];
@@ -514,9 +513,6 @@ namespace StartOpenness
 
 
 
-            int counter_device = 0;
-            int counter_Dev1 = 0;
-            int counter_Dev2 = 0;
             NetworkInterface networkInterface = null;
             IoSystem ioSystem = null;
             foreach (Device device in MyProject.Devices)

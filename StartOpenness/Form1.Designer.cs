@@ -196,7 +196,6 @@ namespace StartOpenness
             this.btn_OpnExel.TabIndex = 20;
             this.btn_OpnExel.Text = "Open Excel File";
             this.btn_OpnExel.UseVisualStyleBackColor = true;
-            this.btn_OpnExel.Click += new System.EventHandler(this.btn_OpnExel_Click);
             // 
             // btn_AddDevFrExcell
             // 

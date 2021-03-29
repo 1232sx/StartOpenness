@@ -221,11 +221,11 @@ namespace StartOpenness
         }
 
         #endregion
-        private void AddHW(string numberDeviceItemInExelFile, string deviceItemName, string deviceName, string typeNumber, string versionNumber)
+        private void AddHW(string numberDeviceItemInExelFile, string cabinetName, string deviceItemName, string deviceName, string typeNumber, string versionNumber)
         {
             string rowNumber = numberDeviceItemInExelFile;
             string MLFB = $"OrderNumber:{typeNumber}/{versionNumber}";
-            string name = deviceItemName;
+            string name = cabinetName+deviceItemName;
             string devname = deviceName;
             bool found = false;
             try
@@ -468,7 +468,7 @@ namespace StartOpenness
         {
             Subnet mySubnet = CreateNewSubnet();
             ConnectToNewSubnet(mySubnet);
-
+            //EstablishIpAdress(mySubnet);
 
             
             
@@ -619,7 +619,8 @@ namespace StartOpenness
                     {
                         if (Dev2.Name == "PROFINET interface_1" || Dev2.Name == "PROFINET interface" || Dev2.Name == "PROFINET Interface_1" || Dev2.Name == "SCALANCE interface_1")
                         {
-                            networkInterface = MyProject.Devices[counter_device].DeviceItems[counter_Dev1].DeviceItems[counter_Dev2].GetService<NetworkInterface>();
+                            networkInterface = ((IEngineeringServiceProvider)Dev2).GetService<NetworkInterface>();
+
                             if ((networkInterface.InterfaceOperatingMode & InterfaceOperatingModes.IoController) != 0)
                             {
                                 richTextBox1.SelectionColor = Color.Black;
@@ -633,12 +634,12 @@ namespace StartOpenness
                                     TextMessageForRichTextBox1 = $"{ioController.IoSystem.Name} IO system is already connected";
                                     richTextBox1.SelectedText = TextMessageForRichTextBox1;
                                 }
-                                if ((ioController != null)&&(ioController.IoSystem==null))
+                                if ((ioController != null) && (ioController.IoSystem == null))
                                 {
                                     ioSystem = ioController.CreateIoSystem("");
                                 }
-                               
-                                
+
+
                             }
                             if ((networkInterface.InterfaceOperatingMode & InterfaceOperatingModes.IoDevice) != 0)
                             {
@@ -756,7 +757,22 @@ namespace StartOpenness
             GetObjectsData(MyFileName);
         }
 
-        
+        int i = 5;
+        private void button10_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Device createdDeviceName = MyProject.Devices.CreateWithItem("OrderNumber:6ES7 517-3FP00-0AB0/Vx.x", $"PLC_{i}", $"PLC_{i}_station");
+            }
+            catch (Exception ex)
+            {
+
+                richTextBox1.SelectionColor = Color.Black;
+                TextMessageForRichTextBox1 = ex.Message;
+                richTextBox1.SelectedText = TextMessageForRichTextBox1;
+            }
+            i++;
+        }
     }
 
 }

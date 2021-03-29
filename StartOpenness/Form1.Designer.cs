@@ -251,7 +251,7 @@ namespace StartOpenness
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(75, 58);
             this.button7.TabIndex = 26;
-            this.button7.Text = "Add IM";
+            this.button7.Text = "TestIP";
             this.button7.UseVisualStyleBackColor = true;
             this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
@@ -282,6 +282,7 @@ namespace StartOpenness
             this.button10.TabIndex = 29;
             this.button10.Text = "button10";
             this.button10.UseVisualStyleBackColor = true;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
             // button11
             // 
@@ -289,7 +290,7 @@ namespace StartOpenness
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(75, 58);
             this.button11.TabIndex = 30;
-            this.button11.Text = "Test";
+            this.button11.Text = "Device List";
             this.button11.UseVisualStyleBackColor = true;
             this.button11.Click += new System.EventHandler(this.button11_Click);
             // 

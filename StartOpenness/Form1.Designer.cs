@@ -36,6 +36,7 @@ namespace StartOpenness
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.btn_Start = new System.Windows.Forms.Button();
             this.btn_Dispose = new System.Windows.Forms.Button();
             this.btn_SearchProject = new System.Windows.Forms.Button();
@@ -61,6 +62,7 @@ namespace StartOpenness
             this.label5 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.grp_TIA.SuspendLayout();
             this.grp_Project.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -273,6 +275,7 @@ namespace StartOpenness
             this.button9.TabIndex = 28;
             this.button9.Text = "button9";
             this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
             // button10
             // 
@@ -322,6 +325,11 @@ namespace StartOpenness
             this.richTextBox1.TabIndex = 33;
             this.richTextBox1.Text = "";
             // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.Filter = "Excell|*.xls*";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -345,6 +353,7 @@ namespace StartOpenness
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.grp_Project);
             this.Controls.Add(this.grp_TIA);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "Openness_Start";
             this.grp_TIA.ResumeLayout(false);
@@ -384,6 +393,7 @@ namespace StartOpenness
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }
 

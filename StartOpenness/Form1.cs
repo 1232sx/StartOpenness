@@ -1,4 +1,4 @@
-﻿using Microsoft.Office.Interop.Excel;
+﻿
 using Microsoft.Win32;
 using Siemens.Engineering;
 using Siemens.Engineering.Compiler;
@@ -14,8 +14,9 @@ using System.Linq;
 using System.Reflection;
 using System.Drawing;
 using System.Windows.Forms;
+using ExcelDataReader;
+using StartOpenness.Properties;
 
-using _Excel = Microsoft.Office.Interop.Excel;
 
 namespace StartOpenness
 {
@@ -52,10 +53,6 @@ namespace StartOpenness
             {
                 textMessageForRichTextBox1 = "[" + DateTime.Now + "] " + value+"\n";
             }
-        }
-        public string MyFileName
-        {
-            get; set;
         }
         public TiaPortal MyTiaPortal
         {
@@ -221,56 +218,7 @@ namespace StartOpenness
         }
 
         #endregion
-        private void AddHW(string numberDeviceItemInExelFile, string cabinetName, string deviceItemName, string deviceName, string typeNumber, string versionNumber)
-        {
-            string rowNumber = numberDeviceItemInExelFile;
-            string MLFB = $"OrderNumber:{typeNumber}/{versionNumber}";
-            string name = cabinetName+deviceItemName;
-            string devname = deviceName;
-            bool found = false;
-            try
-            {
-                
-                foreach (Device device in MyProject.Devices)
-                {
-                    DeviceItemComposition deviceItemAggregation = device.DeviceItems;
-                    foreach (DeviceItem deviceItem in deviceItemAggregation)
-                    {
-                        // Ошибка при проверке имен 'deviceItem.Name == devname || device.Name == devname' 
-                        //  device.Name == devname => device.Name == name это частично правильно
-                        // добавлено еще одно условие проверки именно для HMI и в итоге получилось 
-                        // if (deviceItem.Name == name || device.Name == devname|| device.Name == name)
-                        // данная проверка не пропускает ни PLC ни HMI
-                        if (deviceItem.Name == name || device.Name == devname )
-                        {
-                            found = true;
-                        }
-                    }
-                }
-                if (found == true)
-                {
-                    richTextBox1.SelectionColor = Color.Blue;
-                    TextMessageForRichTextBox1 = $"DeviceItem {name} already exists";
-                    richTextBox1.SelectedText = TextMessageForRichTextBox1;
-                }
-                else
-                {
-                    Device createdDeviceName = MyProject.Devices.CreateWithItem(MLFB, name, devname);
-                    richTextBox1.SelectionColor = Color.Black;
-                    TextMessageForRichTextBox1 = $"Added DeviceItem: {name} with {MLFB}";
-                    richTextBox1.SelectedText = TextMessageForRichTextBox1;
-                }
-            }
-            catch (Exception ex)
-            {
-                richTextBox1.SelectionColor = Color.Red;
-                TextMessageForRichTextBox1 = $"\nRow number-{rowNumber}\nDeviceItemName-{deviceItemName}\n{ex.Message}";
-                richTextBox1.SelectedText = TextMessageForRichTextBox1;
-            }
-            
-            
-
-        }
+       
         private void btn_ConnectTIA(object sender, EventArgs e)
         {
             btn_Connect.Enabled = false;
@@ -321,98 +269,58 @@ namespace StartOpenness
             btn_SearchProject.Enabled = false;
             btn_Save.Enabled = true;
         }
-        private void ItinializeCombobox1(string fileName)
-        {
-            if (fileName != string.Empty)
-            {
-                //MessageBox.Show(fileName);
-                _Application excel = new _Excel.Application();
-                Workbook wb = excel.Workbooks.Open(fileName);
-                // Провубю вставить выбор по номеру в Комбобоксе
-                List<string> sheetName = new List<string>();
-                foreach (Worksheet item in wb.Worksheets)
-                {
-                    sheetName.Add(item.Name);
-                }
-                comboBox1.DataSource = sheetName;
-                wb.Close();
-                excel.Quit();
-            }
-        }
-        private void GetObjectsData(string fileName)
-        {
-            
-            if (fileName != string.Empty)
-            {
-
-                _Application excel = new _Excel.Application();
-                Workbook wb = excel.Workbooks.Open(fileName);
-                // Worksheet - это листы excel, выбираются из comboBox1.SelectedItem, который подгружается при загрузке файла
-                // Загрузка листа меняется при изменении comboBox1.SelectedItem
-                Worksheet ws = wb.Worksheets[comboBox1.SelectedItem];
-                Range ur = ws.UsedRange;
-              
-
-                dataGridView1.Columns.Clear();
-                // С excel все печально, нумерция ячеек начинается не с [0,0], а с [1,1]
-                // Добавление колонок в ДГВ
-                for (int k = 1; k <= ur.Columns.Count; k++)
-                {
-                    dataGridView1.Columns.Add(ur.Cells[1, k].Text, ur.Cells[1, k].Text);
-                }
-                dataGridView1.Rows.Clear();
-                // Создаю массив для записи значений каждой ячейки строки для дальшего добавления в ДГВ
-                string[] excellRows = new string[ur.Columns.Count];
-                // налало начинается с 1, так что 2 строка будет 2
-                for (int r = 2; r <= ur.Rows.Count; r++)
-                {
-                    for (int i = 0; i < ur.Columns.Count; i++)
-                    {
-                        excellRows[i] = ur.Cells[r, i + 1].Text;
-                    }
-                    dataGridView1.Rows.Add(excellRows);
-                   
-                }
-                wb.Close();
-                excel.Quit();
-            }
-        }
-        private string FileDialogOpen(bool UsingDragDrop, DragEventArgs e = null)
-        {
-            string fileName;
-
-            if (UsingDragDrop)
-            {
-                string[] files;
-                files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                fileName = files[0].ToString();
-            }
-            else
-            {
-                OpenFileDialog ofd = new OpenFileDialog();
-                ofd.Filter = "Excel Office | *.xl*";
-                ofd.ShowDialog();
-                fileName = ofd.FileName;
-            }
-            return fileName;
-        }
         private void btn_OpnExel_Click(object sender, EventArgs e)
         {
-            MyFileName = FileDialogOpen(false);
-            ItinializeCombobox1(MyFileName);
+            try
+            {
+                DialogResult res = openFileDialog1.ShowDialog();
+                if (res == DialogResult.OK)
+                {
+                    FileNameFromExcel = openFileDialog1.FileName;
+                    OpenExcelFileAndInitializeCombobox(FileNameFromExcel);
+                }
+            }
+            catch (Exception ex)
+            {
+                TextMessageForRichTextBox1 = $"{ex.Message}";
+            }
+        }
+        private void OpenExcelFileAndInitializeCombobox(string path)
+        {
+            FileStream stream = File.Open(path, FileMode.Open, FileAccess.Read);
+            IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream);
+            DataSet db = reader.AsDataSet(new ExcelDataSetConfiguration()
+            {
+                ConfigureDataTable = (x) => new ExcelDataTableConfiguration()
+                {
+                    UseHeaderRow = true
+                }
+            });
            
+                TableCollectionFromExcel = db.Tables;
+                comboBox1.Items.Clear();
+                foreach (DataTable table in TableCollectionFromExcel)
+                {
+                    comboBox1.Items.Add(table.TableName);
+                }
+                comboBox1.SelectedIndex = 0;
+            
+            
+            reader.Close();
+            stream.Close();
+        }
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+           TableFromExcel = TableCollectionFromExcel[Convert.ToString(comboBox1.SelectedItem)];
+           dataGridView1.DataSource = TableFromExcel;
         }
         private void button2_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < dataGridView1.Rows.Count; i++)
-            {
-                if (dataGridView1.Rows[i].Cells[0].Value == null)
-                {
-                    continue;
-                }
+          
 
-                AddHW(dataGridView1.Rows[i].Cells[0].Value.ToString(), dataGridView1.Rows[i].Cells[1].Value.ToString(), dataGridView1.Rows[i].Cells[2].Value.ToString(), dataGridView1.Rows[i].Cells[3].Value.ToString(), dataGridView1.Rows[i].Cells[4].Value.ToString());
-            }
+
+                //AddHW(dataGridView1.Rows[i].Cells[0].Value.ToString(), dataGridView1.Rows[i].Cells[1].Value.ToString(), dataGridView1.Rows[i].Cells[2].Value.ToString(), dataGridView1.Rows[i].Cells[3].Value.ToString(), dataGridView1.Rows[i].Cells[4].Value.ToString());
+          
         }
         //private void AddHW(DataTable dataTableFromExcel, DataTable HWconfigSheme)
         //{
@@ -467,7 +375,7 @@ namespace StartOpenness
         private void button3_Click(object sender, EventArgs e)
         {
             Subnet mySubnet = CreateNewSubnet();
-            ConnectToNewSubnet(mySubnet);
+            ConnectToNewSubnetAndEstablishIPadress(mySubnet);
             //EstablishIpAdress(mySubnet);
 
             
@@ -502,50 +410,46 @@ namespace StartOpenness
         }
         private void ConnectToNewSubnetAndEstablishIPadress(Subnet existingSubnet)
         {
-            NetworkInterface network = null; ;
+            NetworkInterface network;
             Node node;
-
-
-            int counter_device = 0;
-            int counter_Dev1 = 0;
-            int counter_Dev2 = 0;
-
-
             foreach (Device device in MyProject.Devices)
             {
                 foreach (DeviceItem Dev1 in device.DeviceItems)
                 {
                     foreach (DeviceItem Dev2 in Dev1.DeviceItems)
                     {
+                        // хардкодим название девайса для подключения, потому что при использовании 
+                        //node = network.Nodes.First() - он перебирает все интерфейсы для подключения, которые нам не нужны
                         if (Dev2.Name == "PROFINET interface_1" || Dev2.Name == "PROFINET interface" || Dev2.Name == "PROFINET Interface_1" || Dev2.Name == "SCALANCE interface_1")
                         {
-                            network = MyProject.Devices[counter_device].DeviceItems[counter_Dev1].DeviceItems[counter_Dev2].GetService<NetworkInterface>();
-                            node = network.Nodes[0];
+                            //очень полезная штука для быстрого поиска интерфейса в девайситеме
+                            network = ((IEngineeringServiceProvider)Dev2).GetService<NetworkInterface>(); 
+                            node = network.Nodes.First();
                             // внизу мы берем подсеть к которой подключени нод, надо для проверки
                             Subnet sub = node.ConnectedSubnet;
-                            // если интерфейс подключеня в наличии и еще не подключен к сети
-                            if (node != null && sub == null)
+                            //если нод не подключен к сети
+                            if (sub == null)
                             {
-                                node.ConnectToSubnet(MySubnet);
+                                node.ConnectToSubnet(existingSubnet);
                                 richTextBox1.SelectionColor = Color.Black;
-                                TextMessageForRichTextBox1 = $"{MyProject.Devices[counter_device].Name} is connected to [{MySubnet.Name}]";
+                                TextMessageForRichTextBox1 = $"{Dev1.Name} is connected to [{existingSubnet.Name}]";
                                 richTextBox1.SelectedText = TextMessageForRichTextBox1;
                             }
-                            // если интерфейс подключения в наличии и уже есть подключение к сети
-                            if (node != null && sub != null)
+                            // если нод уже подключенк сети
+                            if (sub != null)
                             {
-                                // Проверка соответствия имен заданной сети и сети к которой подключен нод
-                                if (MySubnet.Name == sub.Name)
+                                // если нод подключен к сети которую мы создаем
+                                if (existingSubnet.Name == sub.Name)
                                 {
                                     richTextBox1.SelectionColor = Color.Blue;
-                                    TextMessageForRichTextBox1 = $"{MyProject.Devices[counter_device].Name} is already connected to [{MySubnet.Name}]";
+                                    TextMessageForRichTextBox1 = $"{Dev1.Name} is already connected to [{existingSubnet.Name}]";
                                     richTextBox1.SelectedText = TextMessageForRichTextBox1;
                                 }
+                                // если нод подключен к сети которая уже была создана до нас
                                 else
                                 {
-                                    node.ConnectToSubnet(MySubnet);
-                                    richTextBox1.SelectionColor = Color.Black;
-                                    TextMessageForRichTextBox1 = $"{MyProject.Devices[counter_device].Name} is connected to [{MySubnet.Name}]";
+                                    richTextBox1.SelectionColor = Color.Purple;
+                                    TextMessageForRichTextBox1 = $"{Dev1.Name} is connected to other [{sub.Name}]";
                                     richTextBox1.SelectedText = TextMessageForRichTextBox1;
                                 }
 
@@ -586,11 +490,7 @@ namespace StartOpenness
                             }
                         }
                     }
-                    counter_Dev1++;
-                    counter_Dev2 = 0;
                 }
-                counter_device++;
-                counter_Dev1 = 0;
             }
         }
         private void CreateAndConnectIOSystem()
@@ -759,27 +659,26 @@ namespace StartOpenness
             i++;
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void button9_Click(object sender, EventArgs e)
         {
-
-            GetObjectsData(MyFileName);
-        }
-
-        int i = 5;
-        private void button10_Click(object sender, EventArgs e)
-        {
-            try
+            for (int i = 0; i < TableFromExcel.Rows.Count; i++)
             {
-                Device createdDeviceName = MyProject.Devices.CreateWithItem("OrderNumber:6ES7 517-3FP00-0AB0/Vx.x", $"PLC_{i}", $"PLC_{i}_station");
+                for (int j = 0; j < TableFromExcel.Columns.Count; j++)
+                {
+                    MessageBox.Show(TableFromExcel.Rows[i][j].ToString());
+                    
+                }
             }
-            catch (Exception ex)
-            {
-
-                richTextBox1.SelectionColor = Color.Black;
-                TextMessageForRichTextBox1 = ex.Message;
-                richTextBox1.SelectedText = TextMessageForRichTextBox1;
-            }
-            i++;
+            
+            
+            
+            //foreach (var row in TableFromExcel.Rows)
+            //{
+            //    foreach (var column in TableFromExcel.Columns)
+            //    {
+            //        MessageBox.Show(row.ToString());
+            //    }
+            //}
         }
     }
 

@@ -203,8 +203,7 @@ namespace StartOpenness
             btn_Save.Enabled = false;
         }
 
-        #endregion
-       
+              
         private void btn_ConnectTIA(object sender, EventArgs e)
         {
             btn_Connect.Enabled = false;
@@ -247,6 +246,7 @@ namespace StartOpenness
             btn_SearchProject.Enabled = false;
             btn_Save.Enabled = true;
         }
+        #endregion
         //private void btn_OpnExel_Click(object sender, EventArgs e)
         //{
         //    try
@@ -274,7 +274,7 @@ namespace StartOpenness
         //            UseHeaderRow = true
         //        }
         //    });
-           
+
         //        TableCollectionFromExcel = db.Tables;
         //        comboBox1.Items.Clear();
         //        foreach (DataTable table in TableCollectionFromExcel)
@@ -282,8 +282,8 @@ namespace StartOpenness
         //            comboBox1.Items.Add(table.TableName);
         //        }
         //        comboBox1.SelectedIndex = 0;
-            
-            
+
+
         //    reader.Close();
         //    stream.Close();
         //}
@@ -294,11 +294,7 @@ namespace StartOpenness
         }
         private void button2_Click(object sender, EventArgs e)
         {
-          
-
-
-                //AddHW(dataGridView1.Rows[i].Cells[0].Value.ToString(), dataGridView1.Rows[i].Cells[1].Value.ToString(), dataGridView1.Rows[i].Cells[2].Value.ToString(), dataGridView1.Rows[i].Cells[3].Value.ToString(), dataGridView1.Rows[i].Cells[4].Value.ToString());
-          
+          //AddHW(dataGridView1.Rows[i].Cells[0].Value.ToString(), dataGridView1.Rows[i].Cells[1].Value.ToString(), dataGridView1.Rows[i].Cells[2].Value.ToString(), dataGridView1.Rows[i].Cells[3].Value.ToString(), dataGridView1.Rows[i].Cells[4].Value.ToString());
         }
         //private void AddHW(DataTable dataTableFromExcel, DataTable HWconfigSheme)
         //{
@@ -309,7 +305,6 @@ namespace StartOpenness
         //    bool found = false;
         //    try
         //    {
-
         //        foreach (Device device in MyProject.Devices)
         //        {
         //            DeviceItemComposition deviceItemAggregation = device.DeviceItems;
@@ -346,26 +341,18 @@ namespace StartOpenness
         //        TextMessageForRichTextBox1 = $"\nRow number-{rowNumber}\nDeviceItemName-{deviceItemName}\n{ex.Message}";
         //        richTextBox1.SelectedText = TextMessageForRichTextBox1;
         //    }
-
-
-
         //}
         private void button3_Click(object sender, EventArgs e)
         {
             Subnet mySubnet = CreateNewSubnet();
             ConnectToNewSubnetAndEstablishIPadress(mySubnet);
             //EstablishIpAdress(mySubnet);
-
-            
-            
         }
 
         private Subnet CreateNewSubnet()
         {
             Subnet MySubnet = null;
             bool foundSubnet = false;
-
-
             foreach (var subnet in MyProject.Subnets)
             {
                 if (subnet.Name == dataGridView1.Rows[1].Cells[5].Value.ToString())
